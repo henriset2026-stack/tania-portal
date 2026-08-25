@@ -1,0 +1,102 @@
+# Weekly database backup — replaces the automatic backups Supabase's free
+# tier does not provide.
+#
+# THIS REPOSITORY IS PUBLIC. Anyone can download artifacts from a public
+# repo's workflow runs, so the dump is NEVER uploaded in plaintext: it is
+# encrypted with GPG symmetric AES-256 using the BACKUP_PASSPHRASE secret
+# before it ever becomes an artifact. Downloading it without the
+# passphrase yields ciphertext.
+#
+# Restore:
+#   gpg --batch --yes --passphrase "<BACKUP_PASSPHRASE>" \
+#       --decrypt tania-backup-YYYY-MM-DD.sql.gpg > restore.sql
+#   psql "<connection-string>" -f restore.sql
+name: Weekly database backup
+
+on:
+  schedule:
+    - cron: "0 2 * * 0" # Sundays, 02:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: supabase-backup
+  cancel-in-progress: false
+
+jobs:
+  dump:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check required secrets
+        env:
+          DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          PASSPHRASE: ${{ secrets.BACKUP_PASSPHRASE }}
+        run: |
+          set -euo pipefail
+          missing=0
+          [ -n "${DB_URL:-}" ]     || { echo "::error::SUPABASE_DB_URL secret is required."; missing=1; }
+          [ -n "${PASSPHRASE:-}" ] || { echo "::error::BACKUP_PASSPHRASE secret is required — refusing to produce an unencrypted backup on a public repo."; missing=1; }
+          exit $missing
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Dump database
+        env:
+          DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          set -euo pipefail
+          umask 077
+          # Roles and data are dumped separately from the schema so a
+          # restore can be done selectively.
+          supabase db dump --db-url "$DB_URL" -f schema.sql
+          supabase db dump --db-url "$DB_URL" --data-only -f data.sql
+          tar czf dump.tar.gz schema.sql data.sql
+          rm -f schema.sql data.sql
+          ls -lh dump.tar.gz
+
+      - name: Encrypt dump
+        env:
+          PASSPHRASE: ${{ secrets.BACKUP_PASSPHRASE }}
+        run: |
+          set -euo pipefail
+          umask 077
+          stamp=$(date -u +%Y-%m-%d)
+          gpg --batch --yes --symmetric --cipher-algo AES256 \
+              --passphrase "$PASSPHRASE" \
+              -o "tania-backup-${stamp}.sql.gpg" dump.tar.gz
+
+          # Round-trip check: an unrestorable backup is not a backup.
+          gpg --batch --yes --quiet --passphrase "$PASSPHRASE" \
+              --decrypt "tania-backup-${stamp}.sql.gpg" > verify.tar.gz
+          if ! cmp -s dump.tar.gz verify.tar.gz; then
+            echo "::error::Decrypted backup does not match the original."
+            exit 1
+          fi
+          tar tzf verify.tar.gz > /dev/null
+
+          # Plaintext must not survive into the artifact step.
+          rm -f dump.tar.gz verify.tar.gz
+          echo "stamp=${stamp}" >> "$GITHUB_ENV"
+          ls -lh "tania-backup-${stamp}.sql.gpg"
+
+      - name: Guard against uploading plaintext
+        run: |
+          set -euo pipefail
+          if ls *.sql *.tar.gz >/dev/null 2>&1; then
+            echo "::error::Unencrypted files present — refusing to upload."
+            ls -l *.sql *.tar.gz || true
+            exit 1
+          fi
+          echo "Only encrypted output remains."
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tania-backup-${{ env.stamp }}
+          path: tania-backup-${{ env.stamp }}.sql.gpg
+          retention-days: 30
+          if-no-files-found: error

@@ -75,7 +75,8 @@ The whole architecture rests on one decision: **there is no application server, 
 - Keep the bundle small: `dynamic import` for chart libraries (recharts), `xlsx`, and anything heavy. Check bundle impact before adding a dependency.
 - Paginate every list query (`.range()`); never `select('*')` on timesheets or audit_log without filters — Supabase free tier has a 5 GB egress cap.
 - Attachment uploads go to the `attachments` bucket, max 10 MB per file, validate size client-side before upload.
-- Supabase free tier auto-pauses after 7 days idle; a GitHub Actions keep-alive pings every 3 days. Don't remove it.
+- Supabase free tier auto-pauses after 7 days idle; `.github/workflows/keepalive.yml` pings every 3 days. Don't remove it, and don't let it fail silently — it exits non-zero on any non-200.
+- `.github/workflows/backup.yml` dumps the database weekly. **The dump is GPG-encrypted before it becomes an artifact** because this repo is public and anyone can download artifacts. Never add a step that uploads a plaintext dump, and never remove the guard step that refuses to upload one. Required secrets: `SUPABASE_DB_URL`, `BACKUP_PASSPHRASE`.
 
 ---
 
@@ -151,5 +152,6 @@ Edge function `supabase/functions/tania-assistant/` + tables `chat_conversations
 - 2026-08: MVP capacity assumption for utilization = 8h × Mon–Fri (national holidays not yet excluded).
 - 2026-08: Budget committed/realized amounts are derived from `budget_entries` via `budget_summary` view — never stored on `budget_lines`.
 - 2026-08: Avatar CORS uses an `ALLOWED_ORIGINS` allowlist secret with exact-match origins, not a wildcard. Default when unset is localhost only — an unconfigured deploy must fail closed, never open.
+- 2026-08: Database backups are GPG symmetric AES-256 encrypted before upload, so backup confidentiality does not depend on repo visibility. The passphrase is the recovery key — losing it makes every backup unrecoverable.
 - 2026-08: Production `ALLOWED_ORIGINS` contains **only the Netlify domain**. No custom Telkom domain is in scope; adding one later is a secret change plus function redeploy, not a code change.
 - 2026-08: `AGENTS.md` is the canonical agent instruction file; `CLAUDE.md` imports it via `@AGENTS.md`. Edit this file, not `CLAUDE.md`.

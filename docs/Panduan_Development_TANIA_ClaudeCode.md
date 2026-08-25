@@ -218,7 +218,24 @@ jobs:
             -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" > /dev/null
 ```
 
-Tambahkan job kedua mingguan yang menjalankan `supabase db dump` dan menyimpan hasilnya sebagai artifact — ini pengganti backup otomatis yang tidak ada di free tier. (Repo privat memakai kuota GitHub Actions gratis 2.000 menit/bulan — jauh lebih dari cukup.)
+Backup mingguan ada di `.github/workflows/backup.yml`. **Penting:** repo `tania-portal` bersifat publik, dan artifact GitHub Actions pada repo publik dapat diunduh siapa pun — karena itu dump dienkripsi GPG AES-256 memakai secret `BACKUP_PASSPHRASE` sebelum diunggah, dan workflow menolak berjalan bila secret itu belum di-set. (Repo publik memakai runner GitHub Actions gratis tanpa batas menit; repo privat mendapat kuota 2.000 menit/bulan.)
+
+Secret yang dibutuhkan di **Settings → Secrets and variables → Actions**:
+
+| Secret | Dipakai oleh | Isi |
+|---|---|---|
+| `SUPABASE_URL` | keepalive | URL project Supabase |
+| `SUPABASE_ANON_KEY` | keepalive | anon key |
+| `SUPABASE_DB_URL` | backup | connection string PostgreSQL |
+| `BACKUP_PASSPHRASE` | backup | passphrase enkripsi — **simpan di luar GitHub**; tanpa ini backup tidak bisa dipulihkan |
+
+Pulihkan backup dengan:
+
+```bash
+gpg --batch --yes --passphrase "<BACKUP_PASSPHRASE>" \
+    --decrypt tania-backup-YYYY-MM-DD.sql.gpg > restore.tar.gz
+tar xzf restore.tar.gz   # schema.sql + data.sql
+```
 
 ---
 

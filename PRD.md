@@ -9,7 +9,9 @@
 | **Status** | Draft — menunggu review Chapter Lead |
 | **Referensi** | `docs/TANIA_Requirement_Document_v1.0.pdf` (sumber ID requirement), `docs/TANIA_Avatar_Addendum.md`, `AGENTS.md` |
 
-> Dokumen ini menerjemahkan Requirement Document v1.0 menjadi keputusan produk yang bisa dieksekusi. Bila terjadi perbedaan angka atau aturan, **skema database di `supabase/migrations/` adalah sumber kebenaran** — dokumen ini mengikuti, bukan sebaliknya.
+> Dokumen ini menerjemahkan Requirement Document v1.0 menjadi keputusan produk yang bisa dieksekusi. Bagian 6 (Functional Requirements) **diverifikasi langsung terhadap PDF v1.0** — seluruh 38 requirement beserta prioritasnya disalin dari Bagian 6 dokumen tersebut.
+>
+> Bila terjadi perbedaan **angka atau aturan implementasi**, **skema database di `supabase/migrations/` adalah sumber kebenaran**. Bila terjadi perbedaan **cakupan requirement**, Requirement Document v1.0 yang berlaku dan divergensi harus dicatat eksplisit (lihat penanda ◐ di Bagian 6).
 
 ---
 
@@ -86,8 +88,12 @@ Lima modul inti (TM, WA, TS, PF, BC) plus fungsi lintas modul (XM): auth berbasi
 ### 5.2 Out of scope MVP (kandidat v1.1)
 
 - **Modul 6 — Avatar AI (AV-01..AV-07)**: sudah dirancang di `docs/TANIA_Avatar_Addendum.md` dan migrasinya sudah disiapkan, tetapi **menunggu persetujuan management** karena satu-satunya komponen berbiaya (Anthropic API). Lihat §9.
+- **Seluruh requirement berprioritas Should dan Could** (12 dari 38): TM-05..TM-07, WA-05, WA-06, TS-05, TS-06, PF-06, PF-07, BC-06, BC-07, XM-04.
+- Pengingat otomatis timesheet (bagian dari TS-04) — bergantung pada XM-04 Notifications.
+- Export PDF (bagian dari XM-03) — MVP hanya Excel.
+- Burn rate & proyeksi akhir tahun (bagian dari BC-05).
+- Ambang alert yang dapat dikonfigurasi (WA-03, BC-04) — MVP memakai nilai tetap.
 - Libur nasional pada perhitungan kapasitas utilisasi (asumsi MVP: 8 jam × Senin–Jumat).
-- Notifikasi email/push untuk approval dan alert.
 - SSO Azure/Entra ID (MVP: email + password, self-signup dimatikan).
 
 ### 5.3 Catatan urutan pengerjaan
@@ -98,66 +104,119 @@ Timesheet (TS) dikerjakan **sebelum** Workload (WA) karena utilisasi dihitung da
 
 ## 6. Functional Requirements
 
-Prioritas: **M** = Must (wajib MVP), **S** = Should (MVP bila waktu cukup), **C** = Could (pasca-MVP).
+Daftar ini disalin dari **Requirement Document v1.0 Bagian 6** (TM 7, WA 6, TS 6, PF 7, BC 7, XM 5 — total 38 requirement). Prioritas **Must / Should / Could** mengikuti dokumen tersebut.
+
+Kolom **MVP** menyatakan cakupan rilis pertama: ✅ penuh · ◐ sebagian (lihat catatan) · ⬜ ditunda.
 
 ### TM — Talent Management
 
-| ID | Requirement | Deskripsi | Prio |
-|---|---|---|---|
-| TM-01 | Profil talent | Data diri, squad, grade, lokasi, manager, status aktif. Profil dibuat otomatis saat user dibuat di Supabase Auth | M |
-| TM-02 | Competency matrix | Skill per talent dengan level 1–5 dan penanda sertifikasi | M |
-| TM-03 | Riwayat penugasan | Daftar proyek yang pernah/sedang dikerjakan, diturunkan dari alokasi & timesheet | S |
-| TM-04 | Pencarian staffing | Cari talent berdasarkan kombinasi skill + level minimum + ketersediaan | M |
+*Tujuan: satu profil talent chapter yang selalu mutakhir sebagai dasar keputusan staffing, pengembangan, dan workload.*
+
+| ID | Requirement | Deskripsi | Prio | MVP |
+|---|---|---|---|---|
+| TM-01 | Talent profile | Profil per talent: identitas (sinkron dari HR/Entra ID), role, grade/level, squad, lokasi, status kepegawaian | Must | ◐ |
+| TM-02 | Competency matrix | Skill & sertifikasi per talent dengan level kemahiran; dapat dicari dan difilter se-chapter | Must | ✅ |
+| TM-03 | Assignment history | Riwayat penugasan proyek berjalan dan lampau beserta peran dan persentase alokasi | Must | ✅ |
+| TM-04 | Talent search & staffing | Cari talent yang tersedia berdasarkan kompetensi, ketersediaan, dan peran | Must | ✅ |
+| TM-05 | Development plan | Rencana pengembangan individu & target sertifikasi, dapat direview manager dan chapter lead | Should | ⬜ |
+| TM-06 | Talent analytics | Tampilan level chapter: cakupan kompetensi, gap sertifikasi, komposisi bench | Should | ⬜ |
+| TM-07 | HR data sync | Sinkronisasi berkala data master pegawai dari sistem HR korporat; override manual ber-audit | Should | ⬜ |
+
+◐ **TM-01** — MVP membuat profil manual (invite-only) tanpa sinkronisasi HR/Entra ID; sinkronisasi adalah TM-07 (Should).
 
 ### WA — Workload Analysis
 
-| ID | Requirement | Deskripsi | Prio |
-|---|---|---|---|
-| WA-01 | Registrasi alokasi | Alokasi persen per talent per proyek per bulan (maks 150%) | M |
-| WA-02 | Utilisasi aktual | Jam approved vs kapasitas bulanan, per orang dan per squad — sumber: view `utilization_monthly` | M |
-| WA-03 | Alert overload | Tanda peringatan saat alokasi atau utilisasi > 100% | M |
-| WA-04 | Heatmap squad | Visual utilisasi per squad per bulan | S |
+*Tujuan: utilisasi yang terukur dan mutakhir di level individu, squad, dan chapter, dihitung dari alokasi dan timesheet aktual.*
+
+| ID | Requirement | Deskripsi | Prio | MVP |
+|---|---|---|---|---|
+| WA-01 | Allocation register | Alokasi rencana per talent per proyek per periode (persen atau jam), dikelola manager/PM | Must | ✅ |
+| WA-02 | Utilization calculation | Utilisasi = jam aktual (dari timesheet) vs kapasitas tersedia per periode; perbandingan rencana vs aktual | Must | ✅ |
+| WA-03 | Overload/underload alerts | Tandai talent di atas ambang yang **dapat dikonfigurasi** (mis. > 100% teralokasi) atau idle di bawah ambang | Must | ◐ |
+| WA-04 | Squad & chapter heatmap | Heatmap utilisasi per squad dan peran lintas minggu/bulan | Must | ✅ |
+| WA-05 | Capacity forecast | Proyeksi alokasi terkomitmen vs kapasitas 1–3 bulan ke depan untuk mendukung keputusan intake | Should | ⬜ |
+| WA-06 | What-if simulation | Simulasi dampak workload bila kandidat proyek ditugaskan ke talent tertentu | Could | ⬜ |
+
+◐ **WA-03** — ambang MVP dipatok 100% (dan idle < 50%) di aplikasi; belum ada tabel konfigurasi ambang seperti diminta dokumen.
 
 ### TS — Project Timesheet
 
-| ID | Requirement | Deskripsi | Prio |
-|---|---|---|---|
-| TS-01 | Entry mingguan | Grid hari × proyek/aktivitas; simpan draft; maks 24 jam per baris; satu baris unik per (talent, proyek, aktivitas, tanggal) | M |
-| TS-02 | Workflow approval | Submit → approve/reject oleh manager dengan catatan; baris rejected bisa diperbaiki talent | M |
-| TS-03 | Kategori aktivitas | delivery / presales / internal / leave / training, dengan penanda billable | M |
-| TS-04 | Indikator compliance | Persentase pengisian per squad per minggu | M |
+*Tujuan: pencatatan effort aktual per proyek dan aktivitas dengan friksi rendah, sebagai tulang punggung data utilisasi dan biaya.*
+
+| ID | Requirement | Deskripsi | Prio | MVP |
+|---|---|---|---|---|
+| TS-01 | Weekly timesheet entry | Talent mencatat jam per proyek dan jenis aktivitas per hari; siklus submit mingguan | Must | ✅ |
+| TS-02 | Approval workflow | Manager (atau PM) mereview dan approve/reject timesheet dengan komentar; entry rejected dikembalikan untuk revisi | Must | ✅ |
+| TS-03 | Project/activity master | Entry mengacu ke daftar terkendali proyek aktif dan jenis aktivitas (delivery, presales, internal, leave, training) | Must | ✅ |
+| TS-04 | Reminders & compliance | Pengingat otomatis untuk timesheet yang belum disubmit; laporan compliance per squad untuk manager | Must | ◐ |
+| TS-05 | Effort-to-cost view | Konversi jam approved menjadi biaya indikatif memakai standard rate per peran, memberi masukan ke tampilan biaya proyek dan anggaran | Should | ⬜ |
+| TS-06 | Copy last week / templates | Isi cepat dari minggu sebelumnya atau template pribadi untuk menekan effort input | Could | ⬜ |
+
+◐ **TS-04** — laporan compliance per squad masuk MVP; **pengingat otomatis tidak**, karena bergantung pada XM-04 (Notifications, prioritas Should). Ini satu-satunya requirement Must yang sengaja dipecah.
 
 ### PF — Project Feasibility
 
-| ID | Requirement | Deskripsi | Prio |
-|---|---|---|---|
-| PF-01 | Intake kandidat proyek | Judul, customer, estimasi revenue, effort (man-days), durasi, kompetensi yang dibutuhkan | M |
-| PF-02 | Scoring berbobot | Lima dimensi, skor 0–5, bobot tetap (lihat §7.2) | M |
-| PF-03 | Resource check | Cek ketersediaan kompetensi yang dibutuhkan terhadap data alokasi & competency matrix | M |
-| PF-04 | Workflow keputusan | `go` / `no_go` / `hold` oleh chapter_lead dengan rationale wajib dan jejak audit | M |
-| PF-05 | Pipeline kanban | Papan kandidat proyek per status keputusan | S |
+*Tujuan: gerbang keputusan yang terstandar dan dapat diaudit untuk menentukan proyek mana yang diambil chapter.*
+
+| ID | Requirement | Deskripsi | Prio | MVP |
+|---|---|---|---|---|
+| PF-01 | Feasibility case intake | PM mengajukan kandidat proyek: deskripsi, customer/sponsor, estimasi revenue/benefit, kompetensi yang dibutuhkan, estimasi effort dan durasi | Must | ✅ |
+| PF-02 | Scoring framework | Scoring **yang dapat dikonfigurasi** lintas dimensi: strategic fit, financial attractiveness, delivery risk, resource availability, technical feasibility; total skor berbobot | Must | ◐ |
+| PF-03 | Resource check | Cek otomatis ke Workload Analysis: apakah kompetensi dan kapasitas yang dibutuhkan tersedia pada periode yang diminta? | Must | ✅ |
+| PF-04 | Decision workflow | Review dan keputusan go/no-go/hold oleh Chapter Lead dengan rationale tercatat; jejak audit penuh atas skor dan keputusan | Must | ✅ |
+| PF-05 | Pipeline dashboard | Tampilan kanban/pipeline seluruh kandidat proyek per tahap dan skor untuk review manajemen | Must | ✅ |
+| PF-06 | Business case attachment | Lampirkan dokumen pendukung (proposal, cost model) ke tiap feasibility case | Should | ◐ |
+| PF-07 | Post-delivery review | Bandingkan effort/biaya/hasil aktual vs estimasi feasibility untuk mengkalibrasi scoring berikutnya | Could | ⬜ |
+
+◐ **PF-02** — dokumen meminta bobot yang dapat dikonfigurasi; implementasi MVP **mengunci** bobot 25/25/20/15/15 di generated column `total_score` demi konsistensi angka dan auditability. Perubahan bobot = migrasi baru + persetujuan management. **Divergensi sadar — perlu ditegaskan saat review.**
+
+◐ **PF-06** — bucket `attachments` (maks 10 MB/file) beserta policy-nya sudah ada di skema; UI unggah belum masuk MVP.
 
 ### BC — Budget Control
 
-| ID | Requirement | Deskripsi | Prio |
-|---|---|---|---|
-| BC-01 | Budget line | Plan anggaran per fiscal year × program × kategori (unik) | M |
-| BC-02 | Pencatatan komitmen | Entry bertipe `commitment`, opsional tertaut ke feasibility case | M |
-| BC-03 | Pencatatan realisasi | Entry bertipe `realization` | M |
-| BC-04 | Alert threshold | Peringatan saat serapan mencapai 80% dan 100% dari plan | M |
-| BC-05 | Ringkasan plan vs komitmen vs realisasi | Sumber: view `budget_summary` | M |
+*Tujuan: visibilitas berkelanjutan atas plan, komitmen, dan realisasi anggaran di level chapter dan proyek, selaras dengan perencanaan RKAP.*
 
-### XM — Cross-module
+| ID | Requirement | Deskripsi | Prio | MVP |
+|---|---|---|---|---|
+| BC-01 | Budget plan register | Struktur anggaran tahunan per program/proyek/kategori biaya, selaras alokasi RKAP yang disetujui | Must | ✅ |
+| BC-02 | Commitment tracking | Catat komitmen belanja (feasibility case yang disetujui, PO, kontrak) terhadap budget line | Must | ✅ |
+| BC-03 | Realization tracking | Catat realisasi per budget line (entry manual atau impor pada Release 1); tampilan plan vs komitmen vs realisasi | Must | ✅ |
+| BC-04 | Threshold alerts | Peringatkan owner saat budget line melewati ambang **yang dapat dikonfigurasi** (mis. 80%, 100% dari plan) | Must | ◐ |
+| BC-05 | Budget dashboard | Dashboard manajemen: burn rate, sisa anggaran, proyeksi sampai akhir tahun, per program dan kategori | Must | ◐ |
+| BC-06 | Reallocation workflow | Ajukan dan setujui pemindahan anggaran antar line dengan jejak audit | Should | ⬜ |
+| BC-07 | SAP import | Impor/rekonsiliasi berkala data realisasi dari SAP | Could | ⬜ |
 
-| ID | Requirement | Deskripsi | Prio |
-|---|---|---|---|
-| XM-01 | Dashboard eksekutif | Ringkasan utilisasi, compliance timesheet, pipeline feasibility, posisi anggaran | M |
-| XM-03 | Export Excel | Export pada setiap tabel utama (library `xlsx`, dynamic import) | S |
-| XM-05 | Admin master data | Kelola projects, activities, skills, dan akun pengguna | M |
-| XM-06 ⚠️ | Audit trail | Perubahan tercatat di `audit_log`; hanya admin & chapter_lead yang bisa membaca | M |
-| XM-07 ⚠️ | Lampiran | Upload dokumen pendukung ke bucket `attachments`, maks 10 MB per file | C |
+◐ **BC-04** — ambang MVP dipatok 80%/100% di aplikasi; belum dapat dikonfigurasi per budget line.
 
-⚠️ **XM-06 dan XM-07 adalah usulan ID baru** — keduanya sudah ada di skema database (`audit_log`, bucket `attachments`) tetapi belum tercantum di Requirement Document v1.0. Perlu dikonfirmasi saat review, atau dimasukkan sebagai tambahan di v1.1.
+◐ **BC-05** — view `budget_summary` menyediakan plan, komitmen, realisasi, dan sisa. **Burn rate dan proyeksi akhir tahun belum ada** — perlu tambahan view atau kolom periode pada `budget_entries`.
+
+### XM — Cross-Module & Dashboard
+
+| ID | Requirement | Deskripsi | Prio | MVP |
+|---|---|---|---|---|
+| XM-01 | Executive dashboard | Satu halaman utama untuk manajemen: ringkasan utilisasi, compliance timesheet, pipeline feasibility, posisi anggaran | Must | ✅ |
+| XM-02 | Integrated data flow | Timesheet memberi masukan ke Workload Analysis; Workload ke resource check Feasibility; keputusan Feasibility membentuk komitmen Budget | Must | ✅ |
+| XM-03 | Export & reporting | Export tabel/dashboard apa pun ke **Excel dan PDF** untuk pelaporan manajemen | Must | ◐ |
+| XM-04 | Notifications | Notifikasi in-portal dan email untuk approval, pengingat, dan alert | Should | ⬜ |
+| XM-05 | Audit log | Seluruh aksi create/update/approve tercatat beserta user, timestamp, dan nilai before/after | Must | ✅ |
+
+◐ **XM-03** — MVP hanya export Excel (library `xlsx`). Export PDF belum ada; pada arsitektur static export, PDF harus dibuat di sisi browser.
+
+**Catatan penting soal XM-05.** Di dokumen v1.0, XM-05 adalah **Audit log** — dan itulah yang dipakai di komentar skema (`-- XM-05: audit log`). Tabel fase pada `docs/Panduan_Development_TANIA_ClaudeCode.md` sempat memakai XM-05 untuk "admin master data"; itu keliru. Fungsi admin master data adalah bagian dari TS-03 (daftar terkendali proyek & aktivitas), bukan requirement XM tersendiri.
+
+### Ringkasan cakupan MVP
+
+| Modul | Must | Should | Could | Total | Must masuk MVP |
+|---|---|---|---|---|---|
+| TM | 4 | 3 | 0 | 7 | 4 (TM-01 sebagian) |
+| WA | 4 | 1 | 1 | 6 | 4 (WA-03 sebagian) |
+| TS | 4 | 1 | 1 | 6 | 4 (TS-04 sebagian) |
+| PF | 5 | 1 | 1 | 7 | 5 (PF-02 divergen) |
+| BC | 5 | 1 | 1 | 7 | 5 (BC-04, BC-05 sebagian) |
+| XM | 4 | 1 | 0 | 5 | 4 (XM-03 sebagian) |
+| **Total** | **26** | **8** | **4** | **38** | **26 — 8 di antaranya sebagian** |
+
+Seluruh requirement **Must** tercakup di MVP, delapan di antaranya sebagian sebagaimana dicatat di atas. Seluruh **Should** dan **Could** ditunda ke v1.1+.
 
 ---
 
@@ -265,11 +324,11 @@ Prinsip yang tidak bisa ditawar:
 
 | Fase | Minggu | Scope | Requirement |
 |---|---|---|---|
-| 1. Fondasi | 1 | Auth, layout, profil, admin master data | TM-01, XM-05 |
-| 2. Timesheet | 2 | Entry mingguan, approval, compliance | TS-01..TS-04 |
-| 3. Talent & Workload | 3 | Competency matrix, alokasi, utilisasi, heatmap | TM-02..TM-04, WA-01..WA-04 |
+| 1. Fondasi | 1 | Auth, layout, profil, master data proyek & aktivitas | TM-01, TS-03, XM-05 |
+| 2. Timesheet | 2 | Entry mingguan, approval, compliance (tanpa pengingat otomatis) | TS-01, TS-02, TS-04 |
+| 3. Talent & Workload | 3 | Competency matrix, riwayat penugasan, alokasi, utilisasi, heatmap | TM-02..TM-04, WA-01..WA-04 |
 | 4. Feasibility & Budget | 4 | Scoring, keputusan, plan vs realisasi, alert | PF-01..PF-05, BC-01..BC-05 |
-| 5. Dashboard & polish | 5 | Dashboard eksekutif, export Excel | XM-01, XM-03 |
+| 5. Dashboard & polish | 5 | Dashboard eksekutif, alur data terintegrasi, export Excel | XM-01, XM-02, XM-03 |
 | 6. UAT & Go-live | 6 | Uji peran, data riil satu bulan, go-live | — |
 
 ---

@@ -1,0 +1,43 @@
+# Supabase free tier auto-pauses a project after 7 days without activity.
+# This ping keeps it awake. It reads one id and discards it — no data is
+# logged, and the response body never reaches the workflow output.
+name: Supabase keep-alive
+
+on:
+  schedule:
+    - cron: "0 1 */3 * *" # every 3 days, 01:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: supabase-keepalive
+  cancel-in-progress: false
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Ping Supabase REST
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          set -euo pipefail
+          if [ -z "${SUPABASE_URL:-}" ] || [ -z "${SUPABASE_ANON_KEY:-}" ]; then
+            echo "::error::SUPABASE_URL and SUPABASE_ANON_KEY secrets are required."
+            exit 1
+          fi
+          # -o /dev/null: never print row data into the public build log.
+          code=$(curl -sS -o /dev/null -w '%{http_code}' \
+            "${SUPABASE_URL}/rest/v1/profiles?select=id&limit=1" \
+            -H "apikey: ${SUPABASE_ANON_KEY}")
+          echo "HTTP ${code}"
+          # A silently failing keep-alive is worse than none: fail loudly so
+          # the project does not pause while the workflow reports success.
+          if [ "${code}" != "200" ]; then
+            echo "::error::Keep-alive ping failed with HTTP ${code}."
+            exit 1
+          fi

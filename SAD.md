@@ -42,6 +42,7 @@ Driver D1–D3 saling menekan ke satu arah yang sama: **hilangkan lapisan aplika
 | AD-8 | **Avatar AI di Supabase Edge Function**, bukan di browser | Melindungi API key Anthropic; menegakkan RLS lewat JWT pemanggil | Satu-satunya komponen berbiaya; satu-satunya kode yang berjalan di server |
 | AD-9 | **Deploy produksi hanya dari `main`, deploy preview dimatikan** | D5 — 1 deploy = 15 dari 300 kredit/bulan | Kerja harian di `dev`; merge ke `main` maks 2–3×/minggu |
 | AD-10 | **`ALLOWED_ORIGINS` berisi tepat satu origin: domain Netlify produksi.** Domain kustom tidak masuk scope | Permukaan serang sekecil mungkin; tidak ada origin yang diizinkan "untuk jaga-jaga" | Menambah domain kustom di kemudian hari = set ulang secret + deploy ulang function, bukan perubahan kode |
+| AD-11 | **Dump database dienkripsi sebelum menjadi artifact** (GPG symmetric AES-256, passphrase dari secret) | Artifact pada repo publik dapat diunduh siapa pun; enkripsi membuat kerahasiaan tidak bergantung pada visibilitas repo | Passphrase menjadi kunci pemulihan — bila hilang, backup tidak dapat dipulihkan. Simpan di luar GitHub |
 
 ---
 
@@ -265,7 +266,7 @@ Konsekuensi penting: `talent` yang bertanya "berapa sisa budget?" mendapat **nol
 | Job | Jadwal | Mekanisme | Alasan |
 |---|---|---|---|
 | Keep-alive Supabase | tiap 3 hari | GitHub Actions → `curl` REST endpoint | Free tier auto-pause setelah 7 hari tanpa aktivitas |
-| Backup database | mingguan | GitHub Actions → `supabase db dump` → artifact | Free tier tidak menyediakan backup otomatis |
+| Backup database | mingguan (Minggu 02:00 UTC) | GitHub Actions → `supabase db dump` (schema + data) → **GPG symmetric AES-256** → artifact, retensi 30 hari | Free tier tidak menyediakan backup otomatis. Repo publik ⇒ artifact dapat diunduh siapa pun, sehingga dump tidak pernah diunggah dalam bentuk plaintext (AD-11) |
 
 ---
 
@@ -281,7 +282,7 @@ Konsekuensi penting: `talent` yang bertanya "berapa sisa budget?" mendapat **nol
 | Auditability | `audit_log` append-only lewat trigger SECURITY DEFINER; hanya leads yang bisa membaca |
 | Privasi chat | `chat_*` hanya bisa dibaca pemiliknya — tidak ada jalur admin (AV-05) |
 | CORS | Edge function memakai allowlist origin dari secret `ALLOWED_ORIGINS` (pencocokan persis, origin di-echo hanya bila cocok, header `Vary: Origin`). Isinya **tepat satu origin**: domain Netlify produksi (AD-10). Tanpa secret: hanya `http://localhost:3000` — gagal tertutup, bukan terbuka |
-| Repo publik | Repositori `tania-portal` bersifat **publik**: jangan pernah commit dump, `.env`, atau data riil; artifact backup GitHub Actions pada repo publik dapat diunduh siapa pun — lihat §15 Q2 |
+| Repo publik | Repositori `tania-portal` bersifat **publik**: jangan pernah commit dump, `.env`, atau data riil. Artifact GitHub Actions pada repo publik dapat diunduh siapa pun, karena itu backup dienkripsi GPG AES-256 sebelum diunggah (AD-11) dan workflow menolak berjalan tanpa secret `BACKUP_PASSPHRASE` |
 
 ---
 
@@ -353,9 +354,8 @@ Free tier tidak menyediakan APM. Yang tersedia:
 | # | Pertanyaan | Dampak bila salah | Dibutuhkan sebelum |
 |---|---|---|---|
 | Q1 | Apakah `security_invoker` pada kedua view sudah diuji per peran? | Kebocoran data lintas peran lewat view | Go-live |
-| Q2 | Repo publik — apakah artifact backup GitHub Actions perlu dipindah ke repo privat atau storage terkontrol? | Dump database dapat diunduh publik | Sebelum backup pertama berjalan |
-| Q3 | Perlukah rate limit per user pada edge function Avatar? | Biaya API tidak terkendali oleh satu pengguna | Aktivasi modul 6 |
-| Q4 | Bagaimana strategi retensi `audit_log` dan `timesheets` terhadap kuota DB 500 MB? | Kuota habis di tahun ke-2 | Review pasca-MVP |
+| Q2 | Perlukah rate limit per user pada edge function Avatar? | Biaya API tidak terkendali oleh satu pengguna | Aktivasi modul 6 |
+| Q3 | Bagaimana strategi retensi `audit_log` dan `timesheets` terhadap kuota DB 500 MB? | Kuota habis di tahun ke-2 | Review pasca-MVP |
 
 ---
 
