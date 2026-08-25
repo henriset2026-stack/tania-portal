@@ -91,7 +91,7 @@ supabase secrets set ALLOWED_ORIGINS="https://<site-anda>.netlify.app"
 supabase functions deploy tania-assistant
 ```
 
-Beberapa origin dipisah koma. Bila secret tidak di-set, hanya `http://localhost:3000` yang diizinkan — deployment gagal tertutup, bukan terbuka ke semua origin.
+Isi dengan **satu origin saja: domain Netlify produksi** — jangan menambah origin lain "untuk jaga-jaga". (Format mendukung beberapa origin dipisah koma bila suatu saat dibutuhkan.) Bila secret tidak di-set, hanya `http://localhost:3000` yang diizinkan — deployment gagal tertutup, bukan terbuka ke semua origin.
 
 ## 6. Prompt untuk Claude Code (frontend widget)
 

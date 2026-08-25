@@ -41,6 +41,7 @@ Driver D1–D3 saling menekan ke satu arah yang sama: **hilangkan lapisan aplika
 | AD-7 | **Skema hanya lewat file migrasi**, tidak pernah lewat dashboard | D4 — riwayat skema harus bisa direview | Migrasi yang sudah ter-apply tidak boleh diedit; perbaikan = migrasi baru |
 | AD-8 | **Avatar AI di Supabase Edge Function**, bukan di browser | Melindungi API key Anthropic; menegakkan RLS lewat JWT pemanggil | Satu-satunya komponen berbiaya; satu-satunya kode yang berjalan di server |
 | AD-9 | **Deploy produksi hanya dari `main`, deploy preview dimatikan** | D5 — 1 deploy = 15 dari 300 kredit/bulan | Kerja harian di `dev`; merge ke `main` maks 2–3×/minggu |
+| AD-10 | **`ALLOWED_ORIGINS` berisi tepat satu origin: domain Netlify produksi.** Domain kustom tidak masuk scope | Permukaan serang sekecil mungkin; tidak ada origin yang diizinkan "untuk jaga-jaga" | Menambah domain kustom di kemudian hari = set ulang secret + deploy ulang function, bukan perubahan kode |
 
 ---
 
@@ -279,8 +280,8 @@ Konsekuensi penting: `talent` yang bertanya "berapa sisa budget?" mendapat **nol
 | Integritas data | Nilai keputusan di-stamp trigger; angka turunan generated/view; constraint unik & range di level tabel |
 | Auditability | `audit_log` append-only lewat trigger SECURITY DEFINER; hanya leads yang bisa membaca |
 | Privasi chat | `chat_*` hanya bisa dibaca pemiliknya — tidak ada jalur admin (AV-05) |
-| CORS | Edge function memakai allowlist origin dari secret `ALLOWED_ORIGINS` (pencocokan persis, origin di-echo hanya bila cocok, header `Vary: Origin`). Tanpa secret: hanya `http://localhost:3000` — gagal tertutup, bukan terbuka |
-| Repo publik | Repositori `tania-portal` bersifat **publik**: jangan pernah commit dump, `.env`, atau data riil; artifact backup GitHub Actions pada repo publik dapat diunduh siapa pun — lihat §15 Q3 |
+| CORS | Edge function memakai allowlist origin dari secret `ALLOWED_ORIGINS` (pencocokan persis, origin di-echo hanya bila cocok, header `Vary: Origin`). Isinya **tepat satu origin**: domain Netlify produksi (AD-10). Tanpa secret: hanya `http://localhost:3000` — gagal tertutup, bukan terbuka |
+| Repo publik | Repositori `tania-portal` bersifat **publik**: jangan pernah commit dump, `.env`, atau data riil; artifact backup GitHub Actions pada repo publik dapat diunduh siapa pun — lihat §15 Q2 |
 
 ---
 
@@ -352,10 +353,9 @@ Free tier tidak menyediakan APM. Yang tersedia:
 | # | Pertanyaan | Dampak bila salah | Dibutuhkan sebelum |
 |---|---|---|---|
 | Q1 | Apakah `security_invoker` pada kedua view sudah diuji per peran? | Kebocoran data lintas peran lewat view | Go-live |
-| Q2 | Berapa origin produksi final yang harus masuk `ALLOWED_ORIGINS` (domain Netlify saja, atau nanti domain kustom Telkom)? | Widget Avatar gagal dengan error CORS | Aktivasi modul 6 |
-| Q3 | Repo publik — apakah artifact backup GitHub Actions perlu dipindah ke repo privat atau storage terkontrol? | Dump database dapat diunduh publik | Sebelum backup pertama berjalan |
-| Q4 | Perlukah rate limit per user pada edge function Avatar? | Biaya API tidak terkendali oleh satu pengguna | Aktivasi modul 6 |
-| Q5 | Bagaimana strategi retensi `audit_log` dan `timesheets` terhadap kuota DB 500 MB? | Kuota habis di tahun ke-2 | Review pasca-MVP |
+| Q2 | Repo publik — apakah artifact backup GitHub Actions perlu dipindah ke repo privat atau storage terkontrol? | Dump database dapat diunduh publik | Sebelum backup pertama berjalan |
+| Q3 | Perlukah rate limit per user pada edge function Avatar? | Biaya API tidak terkendali oleh satu pengguna | Aktivasi modul 6 |
+| Q4 | Bagaimana strategi retensi `audit_log` dan `timesheets` terhadap kuota DB 500 MB? | Kuota habis di tahun ke-2 | Review pasca-MVP |
 
 ---
 
