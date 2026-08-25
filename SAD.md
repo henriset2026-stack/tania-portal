@@ -7,7 +7,7 @@
 | **Versi** | 1.0 (draft) |
 | **Tanggal** | 26 Agustus 2026 |
 | **Status** | Draft — menunggu review Chapter Lead |
-| **Terkait** | `PRD.md` (apa & mengapa) · `CLAUDE.md` (aturan operasional) · `docs/TANIA_Avatar_Addendum.md` |
+| **Terkait** | `PRD.md` (apa & mengapa) · `AGENTS.md` (aturan operasional untuk agent) · `docs/TANIA_Avatar_Addendum.md` |
 
 > Dokumen ini menjelaskan **bagaimana** TANIA dibangun. Semua struktur di sini diverifikasi terhadap migrasi di `supabase/migrations/` — bila dokumen dan skema berbeda, skema yang benar.
 
@@ -148,7 +148,7 @@ utilisasi_% = Σ hours (status='approved') / kapasitas × 100
 
 - Hanya jam **approved** yang masuk hitungan — draft/submitted/rejected diabaikan by design.
 - Rentang bulan yang dihasilkan view: 1 tahun ke belakang sampai 2 tahun ke depan.
-- Asumsi MVP: libur nasional belum dikecualikan (tercatat sebagai keputusan di `CLAUDE.md`).
+- Asumsi MVP: libur nasional belum dikecualikan (tercatat sebagai keputusan di `AGENTS.md`).
 - View memakai `security_invoker = true` → RLS pemanggil tetap berlaku saat membaca view.
 
 ### 6.2 Skor kelayakan — kolom generated `total_score` (PF-02)
@@ -362,7 +362,7 @@ Free tier tidak menyediakan APM. Yang tersedia:
 ## 16. Referensi
 
 - `PRD.md` — kebutuhan produk, requirement ID, business rules
-- `CLAUDE.md` — aturan stack, keamanan, dan konvensi untuk sesi development
+- `AGENTS.md` — aturan stack, keamanan, dan konvensi untuk sesi development (`CLAUDE.md` hanya mengimpornya)
 - `supabase/migrations/` — sumber kebenaran skema, RLS, dan trigger
 - `docs/TANIA_Requirement_Document_v1.0.pdf` — dokumen requirement resmi
 - `docs/TANIA_Avatar_Addendum.md` — rancangan & biaya modul Avatar

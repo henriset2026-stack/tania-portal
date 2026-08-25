@@ -7,7 +7,7 @@
 | **Versi** | 1.0 (draft) |
 | **Tanggal** | 26 Agustus 2026 |
 | **Status** | Draft — menunggu review Chapter Lead |
-| **Referensi** | `docs/TANIA_Requirement_Document_v1.0.pdf` (sumber ID requirement), `docs/TANIA_Avatar_Addendum.md`, `CLAUDE.md` |
+| **Referensi** | `docs/TANIA_Requirement_Document_v1.0.pdf` (sumber ID requirement), `docs/TANIA_Avatar_Addendum.md`, `AGENTS.md` |
 
 > Dokumen ini menerjemahkan Requirement Document v1.0 menjadi keputusan produk yang bisa dieksekusi. Bila terjadi perbedaan angka atau aturan, **skema database di `supabase/migrations/` adalah sumber kebenaran** — dokumen ini mengikuti, bukan sebaliknya.
 
@@ -171,7 +171,7 @@ utilisasi_%     = (Σ jam ber-status 'approved' / kapasitas_bulan) × 100
 ```
 
 - Hanya jam **approved** yang dihitung — draft/submitted/rejected diabaikan.
-- Asumsi MVP: libur nasional **belum** dikecualikan (tercatat sebagai keputusan di `CLAUDE.md`).
+- Asumsi MVP: libur nasional **belum** dikecualikan (tercatat sebagai keputusan di `AGENTS.md`).
 - Alokasi (rencana) dan utilisasi (aktual) adalah dua angka berbeda dan ditampilkan berdampingan, tidak saling menggantikan.
 
 ### 7.2 Scoring kelayakan proyek (PF-02)

@@ -101,12 +101,13 @@ src/components/     # Komponen bersama (shadcn/ui di components/ui)
 src/lib/            # Supabase client + generated types
 supabase/migrations # Migrasi SQL (append-only)
 docs/               # Requirement document, panduan, README migrasi
-CLAUDE.md           # Konteks & aturan untuk sesi Claude Code — baca sebelum develop
+AGENTS.md           # Konteks & aturan untuk agent coding — baca sebelum develop
+CLAUDE.md           # Satu baris: @AGENTS.md
 ```
 
 ## Development dengan Claude Code
 
-Repo ini dikembangkan dengan [Claude Code](https://docs.claude.com/en/docs/claude-code/overview). `CLAUDE.md` di root berisi aturan stack, keamanan, dan konvensi yang dibaca otomatis setiap sesi — perubahan arsitektur harus dicatat di sana. Tahapan pengembangan mengikuti 5 fase MVP di `docs/Panduan_Development_TANIA_ClaudeCode.md`.
+Repo ini dikembangkan dengan [Claude Code](https://docs.claude.com/en/docs/claude-code/overview). `AGENTS.md` di root berisi aturan stack, keamanan, dan konvensi yang dibaca otomatis setiap sesi — perubahan arsitektur harus dicatat di sana. Tahapan pengembangan mengikuti 5 fase MVP di `docs/Panduan_Development_TANIA_ClaudeCode.md`.
 
 ## Lisensi & Kepemilikan
 
