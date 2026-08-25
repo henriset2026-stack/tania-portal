@@ -84,7 +84,14 @@ curl -X POST "https://<project-ref>.supabase.co/functions/v1/tania-assistant" \
   -d '{"message":"siapa kamu?"}'
 ```
 
-Sebelum produksi: ganti `Access-Control-Allow-Origin: *` di `index.ts` dengan domain Netlify Anda.
+Sebelum produksi: set origin yang diizinkan lewat secret (tidak perlu mengedit kode):
+
+```bash
+supabase secrets set ALLOWED_ORIGINS="https://<site-anda>.netlify.app"
+supabase functions deploy tania-assistant
+```
+
+Beberapa origin dipisah koma. Bila secret tidak di-set, hanya `http://localhost:3000` yang diizinkan — deployment gagal tertutup, bukan terbuka ke semua origin.
 
 ## 6. Prompt untuk Claude Code (frontend widget)
 

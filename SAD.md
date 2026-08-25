@@ -279,7 +279,7 @@ Konsekuensi penting: `talent` yang bertanya "berapa sisa budget?" mendapat **nol
 | Integritas data | Nilai keputusan di-stamp trigger; angka turunan generated/view; constraint unik & range di level tabel |
 | Auditability | `audit_log` append-only lewat trigger SECURITY DEFINER; hanya leads yang bisa membaca |
 | Privasi chat | `chat_*` hanya bisa dibaca pemiliknya — tidak ada jalur admin (AV-05) |
-| CORS | Edge function harus dikunci ke origin Netlify sebelum produksi (saat ini `*`) — lihat §15 Q2 |
+| CORS | Edge function memakai allowlist origin dari secret `ALLOWED_ORIGINS` (pencocokan persis, origin di-echo hanya bila cocok, header `Vary: Origin`). Tanpa secret: hanya `http://localhost:3000` — gagal tertutup, bukan terbuka |
 | Repo publik | Repositori `tania-portal` bersifat **publik**: jangan pernah commit dump, `.env`, atau data riil; artifact backup GitHub Actions pada repo publik dapat diunduh siapa pun — lihat §15 Q3 |
 
 ---
@@ -352,7 +352,7 @@ Free tier tidak menyediakan APM. Yang tersedia:
 | # | Pertanyaan | Dampak bila salah | Dibutuhkan sebelum |
 |---|---|---|---|
 | Q1 | Apakah `security_invoker` pada kedua view sudah diuji per peran? | Kebocoran data lintas peran lewat view | Go-live |
-| Q2 | Kapan CORS edge function dikunci ke origin Netlify (kini `*`)? | Endpoint Avatar bisa dipanggil dari origin mana pun | Aktivasi modul 6 |
+| Q2 | Berapa origin produksi final yang harus masuk `ALLOWED_ORIGINS` (domain Netlify saja, atau nanti domain kustom Telkom)? | Widget Avatar gagal dengan error CORS | Aktivasi modul 6 |
 | Q3 | Repo publik — apakah artifact backup GitHub Actions perlu dipindah ke repo privat atau storage terkontrol? | Dump database dapat diunduh publik | Sebelum backup pertama berjalan |
 | Q4 | Perlukah rate limit per user pada edge function Avatar? | Biaya API tidak terkendali oleh satu pengguna | Aktivasi modul 6 |
 | Q5 | Bagaimana strategi retensi `audit_log` dan `timesheets` terhadap kuota DB 500 MB? | Kuota habis di tahun ke-2 | Review pasca-MVP |

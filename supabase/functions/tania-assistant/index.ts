@@ -1,10 +1,13 @@
 // ============================================================
 // TANIA Avatar — Supabase Edge Function: tania-assistant
 // Deploy : supabase functions deploy tania-assistant
-// Secret : supabase secrets set ANTHROPIC_API_KEY=sk-ant-...
+// Secrets : supabase secrets set ANTHROPIC_API_KEY=sk-ant-...
+//           supabase secrets set ALLOWED_ORIGINS="https://<site>.netlify.app"
 //
 // Security model:
 // - The Anthropic API key lives ONLY here (never in the browser).
+// - Browser callers are restricted to the ALLOWED_ORIGINS allowlist;
+//   unset means localhost only, so an unconfigured deploy fails closed.
 // - Every DB tool runs with the CALLER's JWT, so PostgreSQL RLS
 //   applies: the bot can never reveal data the user cannot read.
 //   (e.g. a `talent` asking about budget gets zero rows — by design.)
@@ -20,11 +23,33 @@ const MODEL = "claude-haiku-4-5-20251001"; // cheapest capable model
 const MAX_TOOL_ROUNDS = 5;
 const MAX_HISTORY_MESSAGES = 12;
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*", // ganti dengan domain Netlify Anda di produksi
+// ---------- CORS allowlist ----------
+// Set the production origin(s) as a secret, comma-separated:
+//   supabase secrets set ALLOWED_ORIGINS="https://<your-site>.netlify.app"
+// Unset defaults to localhost only, so an unconfigured deployment fails
+// CLOSED (no browser origin allowed) rather than open to every site.
+const ALLOWED_ORIGINS = (Deno.env.get("ALLOWED_ORIGINS") ?? "http://localhost:3000")
+  .split(",")
+  .map((o) => o.trim())
+  .filter(Boolean);
+
+const BASE_CORS: Record<string, string> = {
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Max-Age": "86400",
+  // The response varies by request origin — stop caches reusing the wrong one.
+  "Vary": "Origin",
 };
+
+// Echo the origin back only when it is on the allowlist. A disallowed origin
+// gets no Allow-Origin header at all, so the browser blocks the response.
+function corsFor(req: Request): Record<string, string> {
+  const origin = req.headers.get("Origin") ?? "";
+  return origin && ALLOWED_ORIGINS.includes(origin)
+    ? { ...BASE_CORS, "Access-Control-Allow-Origin": origin }
+    : { ...BASE_CORS };
+}
 
 // ---------- Tool definitions (Claude tool use) ----------
 const tools = [
@@ -210,8 +235,22 @@ async function callClaude(messages: any[], systemPrompt: string) {
 
 // ---------- Main handler ----------
 Deno.serve(async (req: Request) => {
+  const cors = corsFor(req);
+  // Requests with no Origin header (curl, server-to-server) are not browser
+  // calls, so CORS does not apply to them; the JWT check below still does.
+  const originAllowed =
+    !req.headers.get("Origin") || "Access-Control-Allow-Origin" in cors;
+
   if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: corsHeaders });
+    return originAllowed
+      ? new Response("ok", { headers: cors })
+      : new Response("Origin not allowed", { status: 403, headers: cors });
+  }
+  if (!originAllowed) {
+    return new Response(JSON.stringify({ error: "Origin not allowed" }), {
+      status: 403,
+      headers: { ...cors, "content-type": "application/json" },
+    });
   }
   try {
     // 1. Authenticate the caller; all DB access uses THEIR token (RLS!)
@@ -223,7 +262,7 @@ Deno.serve(async (req: Request) => {
     if (authErr || !auth?.user) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
-        headers: { ...corsHeaders, "content-type": "application/json" },
+        headers: { ...cors, "content-type": "application/json" },
       });
     }
 
@@ -231,7 +270,7 @@ Deno.serve(async (req: Request) => {
     if (!message || typeof message !== "string" || message.length > 2000) {
       return new Response(JSON.stringify({ error: "Invalid message" }), {
         status: 400,
-        headers: { ...corsHeaders, "content-type": "application/json" },
+        headers: { ...cors, "content-type": "application/json" },
       });
     }
 
@@ -331,7 +370,7 @@ Deno.serve(async (req: Request) => {
 
     return new Response(
       JSON.stringify({ conversation_id: convId, reply: finalText }),
-      { headers: { ...corsHeaders, "content-type": "application/json" } },
+      { headers: { ...cors, "content-type": "application/json" } },
     );
   } catch (e) {
     console.error(e);
@@ -339,7 +378,7 @@ Deno.serve(async (req: Request) => {
       JSON.stringify({ error: "Internal error", detail: String((e as Error)?.message ?? e) }),
       {
         status: 500,
-        headers: { ...corsHeaders, "content-type": "application/json" },
+        headers: { ...cors, "content-type": "application/json" },
       },
     );
   }

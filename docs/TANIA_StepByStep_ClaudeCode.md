@@ -202,7 +202,12 @@ $ npm run build && git add -A && git commit -m "feat: timesheet module (TS-01..0
    $ supabase secrets set ANTHROPIC_API_KEY=sk-ant-xxxx
    $ supabase functions deploy tania-assistant
    ```
-2. Edit `index.ts`: ganti `Access-Control-Allow-Origin: *` dengan URL Netlify Anda → deploy ulang.
+2. Kunci CORS ke domain Netlify Anda (tanpa mengedit kode):
+   ```bash
+   $ supabase secrets set ALLOWED_ORIGINS="https://<site-anda>.netlify.app"
+   $ supabase functions deploy tania-assistant
+   ```
+   Tanpa secret ini hanya `http://localhost:3000` yang diizinkan — aman, tapi widget produksi tidak akan jalan.
 3. Uji via curl (perintah lengkap di Addendum Bagian 5) — harus menjawab dalam Bahasa Indonesia.
 4. 💬 Widget frontend: salin **prompt Bagian 6** `TANIA_Avatar_Addendum.md` ke Claude Code apa adanya.
 5. Uji ketat sebagai **talent**: tanya "berapa sisa budget?" → Avatar harus menjawab tidak punya akses (RLS bekerja), bukan angka.

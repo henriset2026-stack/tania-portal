@@ -139,7 +139,8 @@ Edge function `supabase/functions/tania-assistant/` + tables `chat_conversations
 - Read-only by design (AV-04). The bot never writes data; it points users to the module page.
 - Chat history is private per user (AV-05) — there is no admin read path, and none should be added.
 - Token usage is recorded per message (AV-06) for cost monitoring.
-- **Known gap:** CORS is still `Access-Control-Allow-Origin: *`. Lock it to the Netlify origin before any production use.
+- Browser access is limited to the `ALLOWED_ORIGINS` secret (comma-separated exact origins). Unset = `http://localhost:3000` only, so an unconfigured deploy fails closed. Set it before production:
+  `supabase secrets set ALLOWED_ORIGINS="https://<site>.netlify.app"` — and re-set it whenever the site URL changes, or the widget breaks with a CORS error.
 - This is the only paid component. Do not enable it in production without an approved monthly spend cap.
 
 ---
@@ -148,4 +149,5 @@ Edge function `supabase/functions/tania-assistant/` + tables `chat_conversations
 
 - 2026-08: MVP capacity assumption for utilization = 8h × Mon–Fri (national holidays not yet excluded).
 - 2026-08: Budget committed/realized amounts are derived from `budget_entries` via `budget_summary` view — never stored on `budget_lines`.
+- 2026-08: Avatar CORS uses an `ALLOWED_ORIGINS` allowlist secret with exact-match origins, not a wildcard. Default when unset is localhost only — an unconfigured deploy must fail closed, never open.
 - 2026-08: `AGENTS.md` is the canonical agent instruction file; `CLAUDE.md` imports it via `@AGENTS.md`. Edit this file, not `CLAUDE.md`.
