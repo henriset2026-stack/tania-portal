@@ -366,6 +366,7 @@ Free tier tidak menyediakan APM. Yang tersedia:
 - `SRS.md` — spesifikasi formal (SF-1..SF-8), kebutuhan data, NFR, matriks keterlacakan, kriteria penerimaan
 - `TRD.md` — kamus data, inventaris rahasia, kontrak akses data & edge function, prosedur CI/CD
 - `DDD.md` — rancangan basis data: ERD, integritas referensial, indeks, pola RLS, siklus hidup data
+- `UIUX.md` — spesifikasi UI/UX: peta halaman, layar kunci, pola interaksi, aksesibilitas
 - `AGENTS.md` — aturan stack, keamanan, dan konvensi untuk sesi development (`CLAUDE.md` hanya mengimpornya)
 - `supabase/migrations/` — sumber kebenaran skema, RLS, dan trigger
 - `docs/TANIA_Requirement_Document_v1.0.pdf` — dokumen requirement resmi

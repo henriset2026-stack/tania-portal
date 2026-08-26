@@ -382,6 +382,7 @@ update timesheets set status = 'approved' where profile_id = auth.uid();
 ## 13. Referensi
 
 - `DDD.md` — rancangan basis data: ERD, integritas referensial, strategi indeks, pola RLS, pertumbuhan data
+- `UIUX.md` — peta halaman, layar kunci, state wajib, format tampilan
 - `SRS.md` — perilaku formal (SF-1..SF-8), kebutuhan data (DR-1..DR-10), NFR, kriteria penerimaan
 - `SAD.md` — keputusan arsitektur AD-1..AD-11, mode kegagalan, jalur evolusi
 - `PRD.md` — requirement dan cakupan MVP
