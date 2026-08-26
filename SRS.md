@@ -22,6 +22,7 @@ Dokumen ini menyatakan kebutuhan perangkat lunak TANIA MVP secara **formal dan d
 
 | Dokumen | Sifat terhadap SRS |
 |---|---|
+| `BRD.md` | Sumber sasaran bisnis (BO-x) dan keputusan yang diminta |
 | `docs/TANIA_Requirement_Document_v1.0.pdf` | Sumber requirement resmi (TM/WA/TS/PF/BC/XM) |
 | `PRD.md` | **Normatif** untuk daftar requirement, prioritas, cakupan MVP, dan formula bisnis (§6–§7). SRS tidak menyalinnya |
 | `SAD.md` | Realisasi arsitektural; keputusan AD-1..AD-11 |
@@ -290,14 +291,15 @@ Setiap butir dinyatakan dalam bentuk yang dapat diukur; yang tidak dapat diukur 
 
 ### 7.1 Sasaran → requirement → formalisasi → verifikasi
 
-| Metrik (PRD §2) | Sasaran | Requirement | SF | Realisasi | Verifikasi |
-|---|---|---|---|---|---|
-| M1 | Compliance timesheet ≥ 90% | TS-01, TS-02, TS-04 | SF-2 | `timesheets`, trigger stempel | Uji transisi status tiap peran |
-| M2 | Rekap utilisasi < 5 menit | WA-02, WA-04, XM-01 | SF-1, SF-7 | View `utilization_monthly` | Uji formula + kasus batas SF-1.4/1.5 |
-| M3 | 100% keputusan ber-scoring | PF-01..PF-05 | SF-3 | `total_score`, trigger keputusan | Uji rationale wajib; uji kunci setelah decided |
-| M4 | Selisih anggaran ≤ 5% | BC-01..BC-05 | SF-4 | View `budget_summary` | Uji agregasi termasuk entry negatif |
-| M5 | Competency matrix ≥ 95% | TM-02, TM-04 | — | `skills`, `profile_skills` | Uji pencarian & filter |
-| M6 | Biaya infrastruktur Rp 0 | C-3 | SF-8.7 | Free tier; Avatar di luar MVP | Pantau Netlify Usage & Supabase quota |
+| BO (BRD §3) | Metrik (PRD §2) | Sasaran | Requirement | SF | Realisasi | Verifikasi |
+|---|---|---|---|---|---|---|
+| BO-2 | M1 | Compliance timesheet ≥ 90% | TS-01, TS-02, TS-04 | SF-2 | `timesheets`, trigger stempel | Uji transisi status tiap peran |
+| BO-1, BO-6 | M2 | Rekap utilisasi < 5 menit | WA-02, WA-04, XM-01 | SF-1, SF-7 | View `utilization_monthly` | Uji formula + kasus batas SF-1.4/1.5 |
+| BO-3 | M3 | 100% keputusan ber-scoring | PF-01..PF-05 | SF-3 | `total_score`, trigger keputusan | Uji rationale wajib; uji kunci setelah decided |
+| BO-4 | M4 | Selisih anggaran ≤ 5% | BC-01..BC-05 | SF-4 | View `budget_summary` | Uji agregasi termasuk entry negatif |
+| BO-5 | M5 | Competency matrix ≥ 95% | TM-02, TM-04 | — | `skills`, `profile_skills` | Uji pencarian & filter |
+| — | M6 | Biaya infrastruktur Rp 0 | C-3 | SF-8.7 | Free tier; Avatar di luar MVP | Pantau Netlify Usage & Supabase quota |
+| BO-7 | — | Fondasi data historis | XM-05 | SF-6 | `audit_log`, `timesheets` | Uji kelengkapan jejak sejak hari pertama |
 
 ### 7.2 Kebutuhan lintas fungsi
 

@@ -361,6 +361,7 @@ Free tier tidak menyediakan APM. Yang tersedia:
 
 ## 16. Referensi
 
+- `BRD.md` — sasaran bisnis, model manfaat, struktur biaya, keputusan yang diminta
 - `PRD.md` — kebutuhan produk, requirement ID, business rules
 - `SRS.md` — spesifikasi formal (SF-1..SF-8), kebutuhan data, NFR, matriks keterlacakan, kriteria penerimaan
 - `AGENTS.md` — aturan stack, keamanan, dan konvensi untuk sesi development (`CLAUDE.md` hanya mengimpornya)
