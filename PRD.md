@@ -7,7 +7,7 @@
 | **Versi** | 1.0 (draft) |
 | **Tanggal** | 26 Agustus 2026 |
 | **Status** | Draft — menunggu review Chapter Lead |
-| **Referensi** | `BRD.md` (sasaran bisnis & keputusan), `docs/TANIA_Requirement_Document_v1.0.pdf` (sumber ID requirement), `SRS.md` (formalisasi & kriteria uji), `SAD.md`, `docs/TANIA_Avatar_Addendum.md`, `AGENTS.md` |
+| **Referensi** | `BRD.md` (sasaran bisnis & keputusan), `docs/TANIA_Requirement_Document_v1.0.pdf` (sumber ID requirement), `SRS.md` (formalisasi & kriteria uji), `SAD.md`, `TRD.md`, `docs/TANIA_Avatar_Addendum.md`, `AGENTS.md` |
 
 > Dokumen ini menerjemahkan Requirement Document v1.0 menjadi keputusan produk yang bisa dieksekusi. Bagian 6 (Functional Requirements) **diverifikasi langsung terhadap PDF v1.0** — seluruh 38 requirement beserta prioritasnya disalin dari Bagian 6 dokumen tersebut.
 >
