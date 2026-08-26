@@ -153,6 +153,7 @@ Edge function `supabase/functions/tania-assistant/` + tables `chat_conversations
 - 2026-08: MVP capacity assumption for utilization = 8h × Mon–Fri (national holidays not yet excluded).
 - 2026-08: Budget committed/realized amounts are derived from `budget_entries` via `budget_summary` view — never stored on `budget_lines`.
 - 2026-08: Avatar CORS uses an `ALLOWED_ORIGINS` allowlist secret with exact-match origins, not a wildcard. Default when unset is localhost only — an unconfigured deploy must fail closed, never open.
+- 2026-08-27: Separation of duties on timesheet approval applies to every role — nobody approves their own row. A chapter lead's timesheet is approved by an admin and vice versa. Anyone who files timesheets must be approvable by someone else: give them a `manager_id`, or ensure a lead/admin other than themselves exists.
 - 2026-08: Database backups are GPG symmetric AES-256 encrypted before upload, so backup confidentiality does not depend on repo visibility. The passphrase is the recovery key — losing it makes every backup unrecoverable.
 - 2026-08: Production `ALLOWED_ORIGINS` contains **only the Netlify domain**. No custom Telkom domain is in scope; adding one later is a secret change plus function redeploy, not a code change.
 - 2026-08: `AGENTS.md` is the canonical agent instruction file; `CLAUDE.md` imports it via `@AGENTS.md`. Edit this file, not `CLAUDE.md`.

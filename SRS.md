@@ -151,12 +151,12 @@ draft ──submit──► submitted ──approve──► approved
 
 - SF-2.1 — Pemilik baris HARUS dapat membuat, mengubah, dan menghapus barisnya sendiri **hanya** selama status `draft` atau `rejected`.
 - SF-2.2 — Pemilik HARUS dapat mengubah status barisnya sendiri **hanya** menjadi `draft` atau `submitted`. Pemilik TIDAK BOLEH dapat menetapkan `approved` atau `rejected` atas barisnya sendiri.
-- SF-2.3 — Hanya manager dari pemilik baris, `chapter_lead`, atau `admin` yang HARUS dapat mengubah status dari `submitted` menjadi `approved` atau `rejected`.
+- SF-2.3 — Hanya manager dari pemilik baris, `chapter_lead`, atau `admin` yang HARUS dapat mengubah status dari `submitted` menjadi `approved` atau `rejected`, **dan pengubah tersebut TIDAK BOLEH pemilik baris itu sendiri**.
 - SF-2.4 — `submitted_at` HARUS distempel server saat transisi ke `submitted`; `approved_by` HARUS distempel server saat transisi ke `approved` atau `rejected`. Nilai dari klien atas kedua kolom ini TIDAK BOLEH dipercaya.
 - SF-2.5 — Satu baris timesheet HARUS unik per kombinasi (talent, proyek, aktivitas, tanggal).
 - SF-2.6 — `hours` HARUS lebih besar dari 0 dan tidak lebih dari 24.
 - SF-2.7 — Penolakan HARUS menyertakan `approval_note` agar pemilik mengetahui alasan revisi.
-- SF-2.8 — Sistem HARUS mencegah seseorang menyetujui timesheet miliknya sendiri. **Lihat DR-9** — pemisahan tugas ini belum sepenuhnya terjamin oleh skema saat ini.
+- SF-2.8 — Sistem HARUS mencegah **siapa pun**, pada peran mana pun, menyetujui timesheet miliknya sendiri. Ditegakkan dua lapis: constraint anti self-manager (DR-9) menutup jalur `is_manager_of()`, dan predikat `profile_id <> auth.uid()` pada policy approval menutup jalur peran. Timesheet chapter lead disetujui admin, dan sebaliknya.
 
 **Verifikasi:** untuk tiap peran, satu skenario ALLOW dan satu DENY per transisi. Uji khusus: `talent` mencoba `update ... set status='approved'` atas barisnya sendiri HARUS ditolak oleh basis data, bukan oleh frontend.
 

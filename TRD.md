@@ -298,7 +298,7 @@ supabase gen types typescript --linked > src/lib/database.types.ts
 npm run build
 ```
 
-Migrasi di repositori: `20260825000001_init_schema`, `20260825000002_rls_policies`, `20260825000003_seed_master_data`, `20260826000001_avatar_chat`, `20260826000002_profile_manager_not_self`.
+Migrasi di repositori: `20260825000001_init_schema`, `20260825000002_rls_policies`, `20260825000003_seed_master_data`, `20260826000001_avatar_chat`, `20260826000002_profile_manager_not_self`, `20260827000001_approval_separation_of_duties`.
 
 Seluruhnya terverifikasi dapat diterapkan berurutan pada PostgreSQL 16 bersih. **Belum ada bukti pernah diterapkan ke project Supabase.**
 

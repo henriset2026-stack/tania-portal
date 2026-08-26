@@ -280,10 +280,12 @@ Peran disimpan di `profiles.role` dan ditegakkan oleh **RLS PostgreSQL** melalui
 | Master data (projects, activities, skills) | baca | kelola | baca | ubah proyek yang dipimpin | baca | penuh |
 | Alokasi (WA) | baca | kelola | kelola tim | kelola proyeknya | baca | penuh |
 | Timesheet — miliknya | — | — | — | — | CRUD saat draft/rejected | — |
-| Timesheet — tim | baca semua | baca semua | baca + approve tim | — | — | penuh |
+| Timesheet — tim | baca semua | baca semua + approve | baca + approve tim | — | — | penuh + approve |
 | Feasibility case | baca | baca + **decision** | baca | buat & ubah miliknya selama belum diputuskan | baca | penuh |
 | Budget (lines & entries) | baca | kelola | baca | catat entry | **tidak ada akses** | penuh |
 | Audit log | — | baca | — | — | — | baca |
+
+> **Pemisahan tugas approval.** Tidak ada peran yang boleh menyetujui timesheet miliknya sendiri — termasuk `chapter_lead` dan `admin`. Timesheet chapter lead disetujui admin, dan sebaliknya. Konsekuensinya, setiap orang yang mengisi timesheet harus punya `manager_id` atau ada lead/admin selain dirinya.
 
 ---
 

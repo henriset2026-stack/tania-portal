@@ -199,7 +199,7 @@ Empat pola berulang. Tabel baru SEBAIKNYA memakai salah satunya, bukan menciptak
 |---|---|---|
 | **Baca semua, tulis terbatas peran** | `select` untuk `authenticated`; `all` untuk peran tertentu | `skills`, `projects`, `activities`, `allocations` |
 | **Milik sendiri** | `profile_id = auth.uid()` pada USING dan WITH CHECK | `chat_conversations`, `chat_messages`, sebagian `profiles` |
-| **Milik sendiri + atasan + pimpinan** | `own or is_manager_of(profile_id) or role in (leads)` | `timesheets` |
+| **Milik sendiri + atasan + pimpinan** | Baca: `own or is_manager_of(profile_id) or role in (leads)`. Approve: `profile_id <> auth.uid() and (is_manager_of(...) or role in (leads))` | `timesheets` |
 | **Berjenjang peran** | `get_my_role() in (...)` | `budget_lines`, `budget_entries`, `audit_log` |
 
 **Aturan pendukung yang membuat pola di atas aman:**
@@ -255,7 +255,7 @@ Estimasi berikut memakai asumsi yang dinyatakan terbuka; ganti dengan angka nyat
 | Setelah apply | Regenerasi `database.types.ts`, perbaiki type error, `npm run build` |
 | Rollback | Tidak ada rollback otomatis; koreksi selalu berupa migrasi maju |
 
-Migrasi di repositori (lima berkas): `20260825000001_init_schema`, `20260825000002_rls_policies`, `20260825000003_seed_master_data`, `20260826000001_avatar_chat`, `20260826000002_profile_manager_not_self`.
+Migrasi di repositori (enam berkas): `20260825000001_init_schema`, `20260825000002_rls_policies`, `20260825000003_seed_master_data`, `20260826000001_avatar_chat`, `20260826000002_profile_manager_not_self`, `20260827000001_approval_separation_of_duties`.
 
 **Status penerapan.** Seluruh berkas terverifikasi dapat diterapkan berurutan pada PostgreSQL 16 bersih. Sampai dokumen ini ditulis, belum ada bukti migrasi pernah diterapkan ke project Supabase mana pun.
 
@@ -274,7 +274,9 @@ Migrasi di repositori (lima berkas): `20260825000001_init_schema`, `202608250000
 
 G-1 sudah ditutup. Sisanya adalah keputusan yang harus diambil sadar, bukan cacat yang harus diperbaiki sebelum go-live.
 
-**Celah residual pada SF-2.8.** Menutup G-1 menghilangkan jalur self-approval lewat `manager_id`, tetapi policy approval juga mengizinkan `chapter_lead` dan `admin` menyetujui timesheet **milik mereka sendiri**. Menutupnya sepenuhnya berarti menambahkan `profile_id <> auth.uid()` pada policy approval — dan itu menimbulkan pertanyaan siapa yang menyetujui timesheet chapter lead pada chapter yang hanya punya satu. Keputusan produk, bukan perbaikan mekanis; belum diambil.
+**SF-2.8 kini tertutup penuh.** Keputusan 27 Agustus 2026: pemisahan tugas berlaku untuk seluruh peran — timesheet chapter lead disetujui **admin**, dan sebaliknya. Migrasi `20260827000001_approval_separation_of_duties.sql` menambahkan `profile_id <> auth.uid()` pada policy approval.
+
+Tidak ada kebuntuan: `chapter_lead` dan `admin` dapat saling menyetujui, dan siapa pun yang memiliki `manager_id` disetujui atasannya. **Konsekuensi operasional:** setiap orang yang mengisi timesheet harus dapat disetujui pihak lain — pastikan ia punya `manager_id`, atau ada lead/admin selain dirinya.
 
 ---
 
