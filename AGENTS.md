@@ -3,7 +3,7 @@
 Internal portal for Chapter Product & Solution (DPS), Digital Product, Telkom Indonesia.
 Five modules: **Talent Management (TM)**, **Workload Analysis (WA)**, **Project Timesheet (TS)**, **Project Feasibility (PF)**, **Budget Control (BC)**, plus cross-module work (XM). A sixth module — Avatar AI (AV) — is built but **not approved for production**; see §Avatar.
 
-**Read before changing anything:** `BRD.md` (why it is worth doing) · `PRD.md` (what and why) · `SAD.md` (how it is built) · `SRS.md` (formal, testable behaviour — the SF-x rules and acceptance criteria) · `TRD.md` (data dictionary, config inventory, query and endpoint contracts) · `supabase/migrations/` (the actual truth).
+**Read before changing anything:** `BRD.md` (why it is worth doing) · `PRD.md` (what and why) · `SAD.md` (how it is built) · `SRS.md` (formal, testable behaviour — the SF-x rules and acceptance criteria) · `TRD.md` (data dictionary, config inventory, query and endpoint contracts) · `DDD.md` (database design, ON DELETE policy, RLS patterns, known gaps) · `supabase/migrations/` (the actual truth).
 Requirement IDs like TM-01, WA-02, TS-02, PF-04, BC-05 refer to `docs/TANIA_Requirement_Document_v1.0.pdf`.
 
 > When this file, the docs, and the migrations disagree, **the migrations win**. Fix the docs, not the schema.

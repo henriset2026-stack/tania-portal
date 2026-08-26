@@ -68,6 +68,8 @@ Empat tempat berbeda menyimpan konfigurasi. Keliru menaruhnya adalah cara paling
 
 ## 4. Kamus Data
 
+> Rancangan dan alasannya — ERD, kardinalitas, kebijakan ON DELETE, strategi indeks, pola RLS — ada di `DDD.md`. Bagian ini hanya bentuk konkretnya.
+
 ### 4.1 Enum
 
 | Enum | Nilai |
@@ -377,6 +379,7 @@ update timesheets set status = 'approved' where profile_id = auth.uid();
 
 ## 13. Referensi
 
+- `DDD.md` — rancangan basis data: ERD, integritas referensial, strategi indeks, pola RLS, pertumbuhan data
 - `SRS.md` — perilaku formal (SF-1..SF-8), kebutuhan data (DR-1..DR-10), NFR, kriteria penerimaan
 - `SAD.md` — keputusan arsitektur AD-1..AD-11, mode kegagalan, jalur evolusi
 - `PRD.md` — requirement dan cakupan MVP

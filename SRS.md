@@ -27,6 +27,7 @@ Dokumen ini menyatakan kebutuhan perangkat lunak TANIA MVP secara **formal dan d
 | `PRD.md` | **Normatif** untuk daftar requirement, prioritas, cakupan MVP, dan formula bisnis (§6–§7). SRS tidak menyalinnya |
 | `SAD.md` | Realisasi arsitektural; keputusan AD-1..AD-11 |
 | `TRD.md` | Realisasi teknis: kamus data, inventaris konfigurasi, kontrak query & endpoint |
+| `DDD.md` | Rancangan basis data beserta alasannya; celah desain G-1..G-6 |
 | `AGENTS.md` | Aturan operasional pengembangan |
 | `supabase/migrations/` | Realisasi kebutuhan data dan otorisasi |
 
