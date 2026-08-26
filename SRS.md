@@ -1,8 +1,8 @@
-# SRD — Software Requirements Document
+# SRS — Software Requirements Specification
 
 | | |
 |---|---|
-| **Dokumen** | Software Requirements Document (Spesifikasi Kebutuhan Perangkat Lunak) |
+| **Dokumen** | Software Requirements Specification (Spesifikasi Kebutuhan Perangkat Lunak) |
 | **Produk** | TANIA — Portal Digital Product & Solution |
 | **Pemilik** | Chapter Product & Solution (DPS), Digital Product, PT Telkom Indonesia (Persero) Tbk |
 | **Versi** | 1.0 (draft) |
@@ -20,17 +20,17 @@ Dokumen ini menyatakan kebutuhan perangkat lunak TANIA MVP secara **formal dan d
 
 ### 1.2 Hubungan dengan dokumen lain
 
-| Dokumen | Sifat terhadap SRD |
+| Dokumen | Sifat terhadap SRS |
 |---|---|
 | `docs/TANIA_Requirement_Document_v1.0.pdf` | Sumber requirement resmi (TM/WA/TS/PF/BC/XM) |
-| `PRD.md` | **Normatif** untuk daftar requirement, prioritas, cakupan MVP, dan formula bisnis (§6–§7). SRD tidak menyalinnya |
+| `PRD.md` | **Normatif** untuk daftar requirement, prioritas, cakupan MVP, dan formula bisnis (§6–§7). SRS tidak menyalinnya |
 | `SAD.md` | Realisasi arsitektural; keputusan AD-1..AD-11 |
 | `AGENTS.md` | Aturan operasional pengembangan |
 | `supabase/migrations/` | Realisasi kebutuhan data dan otorisasi |
 
-> **Prinsip anti-duplikasi.** Bila SRD dan PRD berbeda mengenai **isi** sebuah requirement, PRD yang berlaku. SRD menambahkan formalitas, kasus batas, dan kriteria verifikasi — bukan sumber kebenaran kedua. Requirement yang disalin ke dua tempat akan berbeda dalam beberapa minggu dan tidak ada yang tahu mana yang benar.
+> **Prinsip anti-duplikasi.** Bila SRS dan PRD berbeda mengenai **isi** sebuah requirement, PRD yang berlaku. SRS menambahkan formalitas, kasus batas, dan kriteria verifikasi — bukan sumber kebenaran kedua. Requirement yang disalin ke dua tempat akan berbeda dalam beberapa minggu dan tidak ada yang tahu mana yang benar.
 >
-> Bila SRD dan **skema database** berbeda mengenai perilaku teknis, skema yang berlaku dan SRD harus dikoreksi.
+> Bila SRS dan **skema database** berbeda mengenai perilaku teknis, skema yang berlaku dan SRS harus dikoreksi.
 
 ### 1.3 Definisi
 
