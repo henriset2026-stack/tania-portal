@@ -51,7 +51,8 @@ The whole architecture rests on one decision: **there is no application server, 
 ## Database rules
 
 - Schema changes ONLY via migration files in `supabase/migrations/` (never via dashboard). Naming: `YYYYMMDDHHMMSS_short_name.sql`.
-- Existing migrations (already applied): `..._init_schema.sql`, `..._rls_policies.sql`, `..._seed_master_data.sql`, `..._avatar_chat.sql`. **Do not edit applied migrations** — create new ones.
+- Migrations in the repo: `..._init_schema.sql`, `..._rls_policies.sql`, `..._seed_master_data.sql`, `..._avatar_chat.sql`, `..._profile_manager_not_self.sql`. All five verified to apply in order on a clean PostgreSQL 16. **There is no evidence any of them has been pushed to a Supabase project yet** — confirm before assuming the schema is live.
+- **Do not edit a migration once it has been applied to a real project** — create a new one. (`init_schema` was corrected in place on 2026-08-26 only because it could never have applied: an ambiguous GROUP BY made the view fail to create, aborting the migration.)
 - After any schema change, regenerate types:
   `supabase gen types typescript --linked > src/lib/database.types.ts`
   and fix all resulting type errors before finishing.

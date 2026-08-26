@@ -291,7 +291,11 @@ select
   t.profile_id,
   p.full_name,
   p.squad,
-  date_trunc('month', t.work_date)::date as period_month,
+  -- Use w.period_month, not a date_trunc alias: an alias named
+  -- period_month is ambiguous with workdays.period_month, and Postgres
+  -- resolves an ambiguous GROUP BY name to the INPUT column, which left
+  -- t.work_date ungrouped and made this view fail to create.
+  w.period_month,
   sum(t.hours) filter (where t.status = 'approved') as approved_hours,
   w.working_days * 8 as capacity_hours,
   round(
@@ -301,7 +305,7 @@ select
 from public.timesheets t
 join public.profiles p on p.id = t.profile_id
 join workdays w on w.period_month = date_trunc('month', t.work_date)::date
-group by t.profile_id, p.full_name, p.squad, period_month, w.working_days;
+group by t.profile_id, p.full_name, p.squad, w.period_month, w.working_days;
 
 -- ---------- XM-05: audit log ----------
 create table public.audit_log (

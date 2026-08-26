@@ -255,7 +255,9 @@ Estimasi berikut memakai asumsi yang dinyatakan terbuka; ganti dengan angka nyat
 | Setelah apply | Regenerasi `database.types.ts`, perbaiki type error, `npm run build` |
 | Rollback | Tidak ada rollback otomatis; koreksi selalu berupa migrasi maju |
 
-Migrasi yang sudah diterapkan: `20260825000001_init_schema`, `20260825000002_rls_policies`, `20260825000003_seed_master_data`, `20260826000001_avatar_chat`.
+Migrasi di repositori (lima berkas): `20260825000001_init_schema`, `20260825000002_rls_policies`, `20260825000003_seed_master_data`, `20260826000001_avatar_chat`, `20260826000002_profile_manager_not_self`.
+
+**Status penerapan.** Seluruh berkas terverifikasi dapat diterapkan berurutan pada PostgreSQL 16 bersih. Sampai dokumen ini ditulis, belum ada bukti migrasi pernah diterapkan ke project Supabase mana pun.
 
 ---
 
@@ -263,14 +265,16 @@ Migrasi yang sudah diterapkan: `20260825000001_init_schema`, `20260825000002_rls
 
 | # | Celah | Dampak | Perbaikan |
 |---|---|---|---|
-| **G-1** | Tidak ada constraint yang mencegah `profiles.manager_id = profiles.id` | Orang yang tercatat sebagai atasan dirinya sendiri dapat menyetujui timesheetnya sendiri — melanggar pemisahan tugas TS-02 | Migrasi: `check (manager_id is null or manager_id <> id)` — **blocker rilis** (SRS DR-9) |
+| ~~G-1~~ | ~~Tidak ada constraint yang mencegah `profiles.manager_id = profiles.id`~~ | — | **DITUTUP** oleh `20260826000002_profile_manager_not_self.sql`. Migrasi memperbaiki data yang sudah melanggar lalu memasang `check (manager_id is null or manager_id <> id)` |
 | **G-2** | `timesheets.profile_id` CASCADE sementara `project_id` RESTRICT | Menghapus pengguna menghapus riwayat effortnya, sedangkan menghapus proyek dilarang demi melindungi data yang sama | Putuskan: larang penghapusan pengguna sebagai prosedur, atau ubah ke RESTRICT (§6.2) |
 | **G-3** | Ambang WA-03 dan BC-04 tidak tersimpan sebagai data | Dokumen requirement meminta ambang yang dapat dikonfigurasi; nilainya kini tetap di aplikasi | Tabel `thresholds` bila keputusan menghendaki (PRD §6) |
 | **G-4** | Bobot scoring PF-02 terkunci di generated column | Divergensi sadar terhadap requirement "configurable" | Keputusan BRD D1 |
 | **G-5** | `profile_skills(skill_id)` dan `budget_entries(feasibility_case_id)` tanpa indeks | Sequential scan pada pencarian talent per skill | Tambah indeks bila volume tumbuh (§9.2) |
 | **G-6** | Kebijakan retensi `audit_log` belum ada | Kuota 500 MB terancam pada tahun kedua | Keputusan BRD D7 |
 
-G-1 adalah satu-satunya celah yang memblokir rilis. Sisanya adalah keputusan yang harus diambil sadar, bukan cacat yang harus diperbaiki sebelum go-live.
+G-1 sudah ditutup. Sisanya adalah keputusan yang harus diambil sadar, bukan cacat yang harus diperbaiki sebelum go-live.
+
+**Celah residual pada SF-2.8.** Menutup G-1 menghilangkan jalur self-approval lewat `manager_id`, tetapi policy approval juga mengizinkan `chapter_lead` dan `admin` menyetujui timesheet **milik mereka sendiri**. Menutupnya sepenuhnya berarti menambahkan `profile_id <> auth.uid()` pada policy approval — dan itu menimbulkan pertanyaan siapa yang menyetujui timesheet chapter lead pada chapter yang hanya punya satu. Keputusan produk, bukan perbaikan mekanis; belum diambil.
 
 ---
 

@@ -263,7 +263,7 @@ draft ──submit──► submitted ──approve──► approved
 | DR-6 | Lampiran HARUS disimpan di object storage, bukan di basis data; maks 10 MB per berkas |
 | DR-7 | Setiap query daftar HARUS dipaginasi; `select('*')` tanpa filter pada `timesheets` dan `audit_log` DILARANG (kuota egress 5 GB/bulan) |
 | DR-8 | Backup mingguan HARUS terenkripsi sebelum menjadi artifact, dan HARUS diverifikasi dapat didekripsi pada proses yang sama |
-| DR-9 | **Belum terpenuhi.** Skema TIDAK memiliki constraint yang mencegah `profiles.manager_id = profiles.id`. Bila seseorang tercatat sebagai manager bagi dirinya sendiri, `is_manager_of()` bernilai benar dan orang tersebut dapat menyetujui timesheet miliknya sendiri — melanggar SF-2.8. Perbaikan HARUS berupa migrasi baru: `check (manager_id is null or manager_id <> id)` |
+| DR-9 | **Terpenuhi** sejak `20260826000002_profile_manager_not_self.sql`: `check (manager_id is null or manager_id <> id)` mencegah seseorang menjadi atasan dirinya sendiri, sehingga jalur self-approval lewat `is_manager_of()` tertutup. Catatan: `chapter_lead` dan `admin` masih dapat menyetujui timesheet miliknya sendiri lewat policy peran — lihat DDD §14 |
 | DR-10 | Strategi retensi `audit_log` dan `timesheets` HARUS ditetapkan sebelum kuota basis data 500 MB terlampaui (lihat SAD §15) |
 
 ---
@@ -339,7 +339,7 @@ Setiap SF di §4 tertaut ke minimal satu requirement PRD, dan setiap requirement
 - [ ] Uji otorisasi lengkap: tidak ada kombinasi (peran × tabel) tanpa hasil ALLOW dan DENY
 - [ ] `talent` terbukti tidak memperoleh baris apa pun dari tabel dan view anggaran
 - [ ] `talent` terbukti tidak dapat menyetujui timesheet miliknya sendiri
-- [ ] DR-9 tertutup oleh migrasi constraint self-manager
+- [x] DR-9 tertutup oleh migrasi constraint self-manager (`20260826000002`)
 - [ ] Pemulihan backup terenkripsi berhasil minimal satu kali
 - [ ] `npm run build` lolos dan situs terdeploy dari `main`
 - [ ] Tidak ada rahasia atau data riil di repositori publik

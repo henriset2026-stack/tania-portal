@@ -298,7 +298,9 @@ supabase gen types typescript --linked > src/lib/database.types.ts
 npm run build
 ```
 
-Migrasi yang sudah ter-apply: `20260825000001_init_schema`, `20260825000002_rls_policies`, `20260825000003_seed_master_data`, `20260826000001_avatar_chat`.
+Migrasi di repositori: `20260825000001_init_schema`, `20260825000002_rls_policies`, `20260825000003_seed_master_data`, `20260826000001_avatar_chat`, `20260826000002_profile_manager_not_self`.
+
+Seluruhnya terverifikasi dapat diterapkan berurutan pada PostgreSQL 16 bersih. **Belum ada bukti pernah diterapkan ke project Supabase.**
 
 ---
 
@@ -373,7 +375,7 @@ update timesheets set status = 'approved' where profile_id = auth.uid();
 - [ ] `ALLOWED_ORIGINS` disetel dan function di-deploy ulang
 - [ ] Deploy Preview dan branch deploy dimatikan di Netlify
 - [ ] Backup terenkripsi berhasil dipulihkan minimal satu kali
-- [ ] Migrasi constraint self-manager (SRS DR-9) sudah diterapkan
+- [x] Migrasi constraint self-manager (SRS DR-9) ada di repo — masih perlu `supabase db push` ke project sungguhan
 
 ---
 
