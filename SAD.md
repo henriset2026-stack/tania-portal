@@ -7,7 +7,7 @@
 | **Versi** | 1.0 (draft) |
 | **Tanggal** | 26 Agustus 2026 |
 | **Status** | Draft — menunggu review Chapter Lead |
-| **Terkait** | `PRD.md` (apa & mengapa) · `AGENTS.md` (aturan operasional untuk agent) · `docs/TANIA_Avatar_Addendum.md` |
+| **Terkait** | `PRD.md` (apa & mengapa) · `SRD.md` (spesifikasi formal & kriteria uji) · `AGENTS.md` (aturan operasional untuk agent) · `docs/TANIA_Avatar_Addendum.md` |
 
 > Dokumen ini menjelaskan **bagaimana** TANIA dibangun. Semua struktur di sini diverifikasi terhadap migrasi di `supabase/migrations/` — bila dokumen dan skema berbeda, skema yang benar.
 
@@ -362,6 +362,7 @@ Free tier tidak menyediakan APM. Yang tersedia:
 ## 16. Referensi
 
 - `PRD.md` — kebutuhan produk, requirement ID, business rules
+- `SRD.md` — spesifikasi formal (SF-1..SF-8), kebutuhan data, NFR, matriks keterlacakan, kriteria penerimaan
 - `AGENTS.md` — aturan stack, keamanan, dan konvensi untuk sesi development (`CLAUDE.md` hanya mengimpornya)
 - `supabase/migrations/` — sumber kebenaran skema, RLS, dan trigger
 - `docs/TANIA_Requirement_Document_v1.0.pdf` — dokumen requirement resmi
