@@ -158,10 +158,10 @@ export default function WorkloadPage() {
       const alloc = allocByPerson.get(p.id) ?? 0;
       const u = utilMap.get(utilKey(p.id, month));
       const pct = Number(u?.utilization_pct ?? 0);
-      const hasRows = u != null;
+      const approved = Number(u?.approved_hours ?? 0);
       if (alloc > OVERLOAD_ALLOC)
         return { p, tone: "warning" as const, text: `dialokasikan ${alloc}% — melebihi ${OVERLOAD_ALLOC}%` };
-      if (!hasRows && alloc > 0)
+      if (approved === 0 && alloc > 0)
         return { p, tone: "danger" as const, text: `dialokasikan ${alloc}% tetapi belum ada timesheet approved` };
       if (pct < IDLE_UTIL)
         return { p, tone: "neutral" as const, text: `utilisasi ${percent(pct)} — di bawah ${IDLE_UTIL}%` };
@@ -254,7 +254,10 @@ export default function WorkloadPage() {
                 const u = utilMap.get(utilKey(p.id, month));
                 const pct = Number(u?.utilization_pct ?? 0);
                 const hrs = Number(u?.approved_hours ?? 0);
-                const noRows = u == null;
+                // The view also returns a row for someone whose entries are all
+                // still draft, with approved_hours NULL. Both that and being
+                // absent entirely mean "nothing approved", so key off the hours.
+                const noRows = hrs === 0;
                 const over = alloc > OVERLOAD_ALLOC;
                 return (
                   <tr

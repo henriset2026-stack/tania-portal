@@ -126,7 +126,7 @@ Daftar lengkap requirement ada di `PRD.md` §6. Bagian ini memformalkan **perila
 - SF-1.2 — Sistem HARUS menjumlahkan **hanya** jam ber-status `approved`. Baris `draft`, `submitted`, dan `rejected` TIDAK BOLEH ikut dihitung.
 - SF-1.3 — Sistem HARUS menghitung `utilization_pct` = `approved_hours` ÷ `capacity_hours` × 100, dibulatkan ke 1 angka desimal.
 - SF-1.4 — Bila `capacity_hours` = 0, sistem HARUS menghasilkan NULL **tanpa** kesalahan pembagian nol.
-- SF-1.5 — Talent yang **tidak memiliki satu pun baris timesheet** pada suatu bulan tidak muncul di view. Antarmuka HARUS menampilkannya sebagai utilisasi 0%, bukan menghilangkannya dari daftar. *(Kegagalan memenuhi butir ini menyembunyikan justru orang yang paling perlu terlihat: yang tidak mengisi timesheet sama sekali.)*
+- SF-1.5 — Ada **dua bentuk** "belum ada jam approved" dan antarmuka HARUS memperlakukan keduanya sama. Talent yang **tidak memiliki satu pun baris timesheet** pada suatu bulan tidak muncul di view; talent yang punya baris tetapi belum ada yang approved **muncul** dengan `approved_hours` NULL dan `utilization_pct` 0,0. Menguji `baris tidak ada` saja akan melewatkan orang yang barisnya masih draft — justru kasus compliance yang paling sering. Antarmuka HARUS menampilkannya sebagai utilisasi 0%, bukan menghilangkannya dari daftar. *(Kegagalan memenuhi butir ini menyembunyikan justru orang yang paling perlu terlihat: yang tidak mengisi timesheet sama sekali.)*
 - SF-1.5b — Angka agregat per squad dan per chapter HARUS memakai **jumlah talent aktif** sebagai penyebut, bukan jumlah baris yang dikembalikan view. Merata-ratakan baris view menghasilkan angka yang justru **naik** ketika seseorang berhenti mengisi timesheet.
 - SF-1.6 — Alokasi (rencana) dan utilisasi (aktual) HARUS ditampilkan sebagai dua angka terpisah; salah satunya TIDAK BOLEH dipakai menggantikan yang lain.
 - SF-1.7 — Perhitungan HARUS idempoten: pembacaan berulang atas data yang sama menghasilkan nilai identik.
@@ -325,7 +325,7 @@ Setiap SF di §4 tertaut ke minimal satu requirement PRD, dan setiap requirement
 
 | Tingkat | Cakupan | Kriteria lulus |
 |---|---|---|
-| **Otorisasi** | Seluruh tabel dan view | Minimal satu ALLOW dan satu DENY per (peran × tabel), dijalankan sebagai SQL dengan JWT tiap peran |
+| **Otorisasi** | Seluruh tabel dan view | Minimal satu ALLOW dan satu DENY per (peran × tabel), dijalankan sebagai SQL dengan JWT tiap peran. Otomatis: `npm run test:db` (`scripts/db-test.mjs`) |
 | Perhitungan | SF-1, SF-3, SF-4 | Seluruh kasus batas terbukti, termasuk pembagian nol dan entry negatif |
 | Transisi status | SF-2 | Setiap transisi tidak sah ditolak **oleh basis data** |
 | Trigger | SF-2.4, SF-3.5, SF-3.6, SF-6 | Nilai dari klien atas kolom stempel diabaikan |
@@ -337,9 +337,9 @@ Setiap SF di §4 tertaut ke minimal satu requirement PRD, dan setiap requirement
 ### 8.2 Kriteria penerimaan rilis
 
 - [ ] Seluruh butir bertanda HARUS terverifikasi
-- [ ] Uji otorisasi lengkap: tidak ada kombinasi (peran × tabel) tanpa hasil ALLOW dan DENY
-- [ ] `talent` terbukti tidak memperoleh baris apa pun dari tabel dan view anggaran
-- [ ] `talent` terbukti tidak dapat menyetujui timesheet miliknya sendiri
+- [x] Uji otorisasi lengkap: tidak ada kombinasi (peran × tabel) tanpa hasil ALLOW dan DENY — 101 kasus, dijalankan CI pada tiap push
+- [x] `talent` terbukti tidak memperoleh baris apa pun dari tabel dan view anggaran — dalam suite
+- [x] `talent` terbukti tidak dapat menyetujui timesheet miliknya sendiri — dalam suite, termasuk jalur draft → approved
 - [x] DR-9 tertutup oleh migrasi constraint self-manager (`20260826000002`)
 - [ ] Pemulihan backup terenkripsi berhasil minimal satu kali
 - [ ] `npm run build` lolos dan situs terdeploy dari `main`

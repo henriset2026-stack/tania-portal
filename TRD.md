@@ -347,7 +347,7 @@ Secret saja tidak berlaku sampai function di-deploy ulang.
 
 | Jenis | Cara | Kriteria lulus |
 |---|---|---|
-| Otorisasi | SQL langsung dengan JWT tiap peran | Minimal satu ALLOW dan satu DENY per (peran × tabel) |
+| Otorisasi | `npm run test:db` — SQL dengan JWT tiap peran pada PostgreSQL 16 bersih | Minimal satu ALLOW dan satu DENY per (peran × tabel); 101 kasus lulus |
 | Perhitungan | Bandingkan view terhadap hitungan manual | SRS §8.3 — tiga angka dicocokkan |
 | Transisi status | Coba transisi tidak sah dari klien | Ditolak **basis data**, bukan frontend |
 | Build | `npm run build` | Static export tanpa error |

@@ -99,6 +99,7 @@ tooling. Do not remove those exclusions; `npm run build` fails without them.
 npm run dev          # local development
 npm run build        # static export → out/ (must pass before every commit)
 npm run lint         # eslint
+npm run test:db      # RLS + calculation suite on a throwaway postgres:16
 supabase db push     # apply new migrations
 supabase gen types typescript --linked > src/lib/database.types.ts
 ```
@@ -136,6 +137,8 @@ PRD.md · SAD.md       # product requirements · architecture
 
 ### Before you claim a task is done
 
+0. `npm run test:db` passes — it is the only check that proves a policy or a
+   derived figure still behaves. Requires Docker; CI runs it on every push.
 1. `npm run build` passes.
 2. Any new table has RLS enabled **and** explicit policies in the same migration.
 3. Types regenerated if the schema changed, with no type errors left.
