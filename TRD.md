@@ -254,8 +254,8 @@ Menambah tool HARUS mengikuti pola yang sama: query lewat klien ber-JWT pemanggi
 |---|---|---|---|---|
 | `/login` | — | publik | Supabase Auth | **dibangun** |
 | `/dashboard` | XM-01 | semua | `utilization_monthly`, `budget_summary`, `feasibility_cases`, `timesheets` | placeholder fase 1 |
-| `/timesheet` | TS | semua (isi milik sendiri) | `timesheets`, `projects`, `activities` | fase 2 |
-| `/timesheet/approval` | TS-02 | manager, chapter_lead, admin | `timesheets` status `submitted` | fase 2 |
+| `/timesheet` | TS | semua (isi milik sendiri) | `timesheets`, `projects`, `activities`, `utilization_monthly` | **dibangun** |
+| `/timesheet/approval` | TS-02 | manager, chapter_lead, admin | `timesheets` status `submitted`, `profiles` | **dibangun** |
 | `/talent` | TM | semua | `profiles`, `skills`, `profile_skills` | fase 3 |
 | `/workload` | WA | manager ke atas | `allocations`, `utilization_monthly` | fase 3 |
 | `/feasibility` | PF | semua (ajukan: pm ke atas) | `feasibility_cases` | fase 4 |
@@ -299,7 +299,7 @@ supabase gen types typescript --linked > src/lib/database.types.ts
 npm run build
 ```
 
-Migrasi di repositori: `20260825000001_init_schema`, `20260825000002_rls_policies`, `20260825000003_seed_master_data`, `20260826000001_avatar_chat`, `20260826000002_profile_manager_not_self`, `20260827000001_approval_separation_of_duties`.
+Migrasi di repositori: `20260825000001_init_schema`, `20260825000002_rls_policies`, `20260825000003_seed_master_data`, `20260826000001_avatar_chat`, `20260826000002_profile_manager_not_self`, `20260827000001_approval_separation_of_duties`, `20260827000002_timesheet_transition_guard`.
 
 Seluruhnya terverifikasi dapat diterapkan berurutan pada PostgreSQL 16 bersih. **Belum ada bukti pernah diterapkan ke project Supabase.**
 

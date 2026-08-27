@@ -138,7 +138,7 @@ Daftar lengkap requirement ada di `PRD.md` §6. Bagian ini memformalkan **perila
 | | |
 |---|---|
 | **Sumber** | TS-01, TS-02 |
-| **Realisasi** | Tabel `timesheets`, policy RLS, trigger `stamp_timesheet_transitions()` |
+| **Realisasi** | Tabel `timesheets`, policy RLS, trigger `stamp_timesheet_transitions()` dan `enforce_timesheet_transition()` |
 
 **Transisi status yang sah:**
 
@@ -150,7 +150,7 @@ draft ──submit──► submitted ──approve──► approved
 ```
 
 - SF-2.1 — Pemilik baris HARUS dapat membuat, mengubah, dan menghapus barisnya sendiri **hanya** selama status `draft` atau `rejected`.
-- SF-2.2 — Pemilik HARUS dapat mengubah status barisnya sendiri **hanya** menjadi `draft` atau `submitted`. Pemilik TIDAK BOLEH dapat menetapkan `approved` atau `rejected` atas barisnya sendiri.
+- SF-2.2 — Pemilik HARUS dapat mengubah status barisnya sendiri **hanya** menjadi `draft` atau `submitted`. Pemilik TIDAK BOLEH dapat menetapkan `approved` atau `rejected` atas barisnya sendiri. **Ditegakkan trigger `enforce_timesheet_transition()`, bukan policy** — lihat DDD §14 G-7 untuk alasannya.
 - SF-2.3 — Hanya manager dari pemilik baris, `chapter_lead`, atau `admin` yang HARUS dapat mengubah status dari `submitted` menjadi `approved` atau `rejected`, **dan pengubah tersebut TIDAK BOLEH pemilik baris itu sendiri**.
 - SF-2.4 — `submitted_at` HARUS distempel server saat transisi ke `submitted`; `approved_by` HARUS distempel server saat transisi ke `approved` atau `rejected`. Nilai dari klien atas kedua kolom ini TIDAK BOLEH dipercaya.
 - SF-2.5 — Satu baris timesheet HARUS unik per kombinasi (talent, proyek, aktivitas, tanggal).

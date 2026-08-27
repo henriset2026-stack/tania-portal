@@ -202,6 +202,8 @@ Empat pola berulang. Tabel baru SEBAIKNYA memakai salah satunya, bukan menciptak
 | **Milik sendiri + atasan + pimpinan** | Baca: `own or is_manager_of(profile_id) or role in (leads)`. Approve: `profile_id <> auth.uid() and (is_manager_of(...) or role in (leads))` | `timesheets` |
 | **Berjenjang peran** | `get_my_role() in (...)` | `budget_lines`, `budget_entries`, `audit_log` |
 
+**Peringatan pola.** Dua policy UPDATE pada satu tabel **tidak** menghasilkan gabungan yang aman: USING dan WITH CHECK dievaluasi terpisah lalu di-OR, sehingga policy A dapat menyumbang izin baris lama dan policy B izin baris baru. Untuk aturan transisi status, pakai trigger BEFORE UPDATE — bukan sepasang policy.
+
 **Aturan pendukung yang membuat pola di atas aman:**
 
 1. Fungsi helper (`get_my_role`, `is_manager_of`) HARUS `stable` + `security definer` + `set search_path` + dicabut dari `anon` — tanpa `security definer`, policy pada `profiles` yang membaca `profiles` akan rekursif.
@@ -221,6 +223,7 @@ Empat pola berulang. Tabel baru SEBAIKNYA memakai salah satunya, bukan menciptak
 | `guard_profile_privileges()` | trigger BEFORE UPDATE | Menolak perubahan `role`, `is_active`, `manager_id` oleh non-admin |
 | `stamp_timesheet_transitions()` | trigger BEFORE UPDATE | Stempel `submitted_at`, `approved_by` |
 | `stamp_feasibility_decision()` | trigger BEFORE UPDATE | Stempel `decided_by`, `decided_at`; **menolak keputusan tanpa rationale** |
+| `enforce_timesheet_transition()` | trigger BEFORE UPDATE | Menegakkan state machine TS-02 dengan melihat OLD dan NEW sekaligus |
 | `audit_trigger()` | trigger AFTER I/U/D | Menulis `audit_log` pada 5 tabel (SECURITY DEFINER) |
 
 ---
@@ -255,7 +258,7 @@ Estimasi berikut memakai asumsi yang dinyatakan terbuka; ganti dengan angka nyat
 | Setelah apply | Regenerasi `database.types.ts`, perbaiki type error, `npm run build` |
 | Rollback | Tidak ada rollback otomatis; koreksi selalu berupa migrasi maju |
 
-Migrasi di repositori (enam berkas): `20260825000001_init_schema`, `20260825000002_rls_policies`, `20260825000003_seed_master_data`, `20260826000001_avatar_chat`, `20260826000002_profile_manager_not_self`, `20260827000001_approval_separation_of_duties`.
+Migrasi di repositori (tujuh berkas): `20260825000001_init_schema`, `20260825000002_rls_policies`, `20260825000003_seed_master_data`, `20260826000001_avatar_chat`, `20260826000002_profile_manager_not_self`, `20260827000001_approval_separation_of_duties`, `20260827000002_timesheet_transition_guard`.
 
 **Status penerapan.** Seluruh berkas terverifikasi dapat diterapkan berurutan pada PostgreSQL 16 bersih. Sampai dokumen ini ditulis, belum ada bukti migrasi pernah diterapkan ke project Supabase mana pun.
 
@@ -267,6 +270,7 @@ Migrasi di repositori (enam berkas): `20260825000001_init_schema`, `202608250000
 |---|---|---|---|
 | ~~G-1~~ | ~~Tidak ada constraint yang mencegah `profiles.manager_id = profiles.id`~~ | — | **DITUTUP** oleh `20260826000002_profile_manager_not_self.sql`. Migrasi memperbaiki data yang sudah melanggar lalu memasang `check (manager_id is null or manager_id <> id)` |
 | **G-2** | `timesheets.profile_id` CASCADE sementara `project_id` RESTRICT | Menghapus pengguna menghapus riwayat effortnya, sedangkan menghapus proyek dilarang demi melindungi data yang sama | Putuskan: larang penghapusan pengguna sebagai prosedur, atau ubah ke RESTRICT (§6.2) |
+| ~~G-7~~ | ~~Dua policy UPDATE pada `timesheets` dapat dikombinasikan: USING dari policy pemilik + WITH CHECK dari policy approver memperbolehkan pemilik mengubah barisnya sendiri dari `draft` langsung ke `approved`~~ | — | **DITUTUP** oleh `20260827000002_timesheet_transition_guard.sql`. PostgreSQL meng-OR seluruh USING terhadap baris lama dan seluruh WITH CHECK terhadap baris baru secara terpisah, sehingga pasangan policy mengizinkan transisi yang tidak diizinkan satu pun di antaranya. Trigger BEFORE UPDATE melihat OLD dan NEW bersamaan |
 | **G-3** | Ambang WA-03 dan BC-04 tidak tersimpan sebagai data | Dokumen requirement meminta ambang yang dapat dikonfigurasi; nilainya kini tetap di aplikasi | Tabel `thresholds` bila keputusan menghendaki (PRD §6) |
 | **G-4** | Bobot scoring PF-02 terkunci di generated column | Divergensi sadar terhadap requirement "configurable" | Keputusan BRD D1 |
 | **G-5** | `profile_skills(skill_id)` dan `budget_entries(feasibility_case_id)` tanpa indeks | Sequential scan pada pencarian talent per skill | Tambah indeks bila volume tumbuh (§9.2) |

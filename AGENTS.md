@@ -43,6 +43,7 @@ The whole architecture rests on one decision: **there is no application server, 
 | `handle_new_user()` | A `profiles` row exists for every `auth.users` row |
 | `guard_profile_privileges()` | Non-admins cannot change `role`, `is_active`, or `manager_id` — including on their own row |
 | `stamp_timesheet_transitions()` | `submitted_at` / `approved_by` are server-set on status change |
+| `enforce_timesheet_transition()` | The TS-02 state machine. **Do not try to express transition rules as a second UPDATE policy** — Postgres ORs every USING against the old row and every WITH CHECK against the new row separately, so two policies can permit a transition neither allows alone |
 | `stamp_feasibility_decision()` | `decided_by` / `decided_at` are server-set, and a decision **without** `decision_rationale` is rejected |
 | `audit_trigger()` | Append-only audit rows on `profiles`, `timesheets`, `feasibility_cases`, `budget_lines`, `budget_entries` |
 
@@ -83,8 +84,8 @@ The whole architecture rests on one decision: **there is no application server, 
 
 ## Commands
 
-Phase 1 (fondasi) is scaffolded: `/login`, `/dashboard`, `/profil`, `/admin`.
-Everything else is a disabled "segera" entry in the sidebar until its phase.
+Phases 1–2 are built: `/login`, `/dashboard`, `/profil`, `/admin`, `/timesheet`,
+`/timesheet/approval`. Everything else is a disabled "segera" entry until its phase.
 
 `supabase/` (Deno) and `design/` (canvas artboards) are excluded from
 `tsconfig.json` and `eslint.config.mjs` — different runtimes with their own

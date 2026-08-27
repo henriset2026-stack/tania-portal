@@ -20,12 +20,11 @@ const ALL: readonly UserRole[] = [
 
 export const NAV: readonly NavItem[] = [
   { href: "/dashboard", label: "Dashboard", roles: ALL },
-  { href: "/timesheet", label: "Timesheet", roles: ALL, planned: true },
+  { href: "/timesheet", label: "Timesheet", roles: ALL },
   {
     href: "/timesheet/approval",
     label: "Approval",
     roles: ["chapter_lead", "manager", "admin"],
-    planned: true,
   },
   { href: "/talent", label: "Talent", roles: ALL, planned: true },
   {
