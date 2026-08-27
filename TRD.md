@@ -301,7 +301,7 @@ npm run build
 
 Migrasi di repositori: `20260825000001_init_schema`, `20260825000002_rls_policies`, `20260825000003_seed_master_data`, `20260826000001_avatar_chat`, `20260826000002_profile_manager_not_self`, `20260827000001_approval_separation_of_duties`, `20260827000002_timesheet_transition_guard`.
 
-Seluruhnya terverifikasi dapat diterapkan berurutan pada PostgreSQL 16 bersih. **Belum ada bukti pernah diterapkan ke project Supabase.**
+Seluruhnya sudah diterapkan ke project Supabase `tmzwlurjwantvuptpvpe` (PostgreSQL 17) pada 27 Agustus 2026; `supabase migration list --linked` adalah acuannya. Tetap diverifikasi ulang pada PostgreSQL 16 bersih oleh `npm run test:db`.
 
 ---
 

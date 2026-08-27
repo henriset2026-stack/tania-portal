@@ -10,7 +10,7 @@ import { useSession } from "@/components/session-provider";
 import { useQuery } from "@/lib/use-query";
 import { getSupabase } from "@/lib/supabase";
 import { hours as fmtHours, percent } from "@/lib/format";
-import type { Activity, Project, TimesheetStatus } from "@/lib/database.types";
+import type { Activity, Project, TimesheetStatus } from "@/lib/db";
 import {
   addDays,
   monthKey,

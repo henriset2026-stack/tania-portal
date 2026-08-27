@@ -8,7 +8,7 @@ import {
   type ReactNode,
 } from "react";
 import { getSupabase, isSupabaseConfigured } from "@/lib/supabase";
-import type { Profile } from "@/lib/database.types";
+import type { Profile } from "@/lib/db";
 
 interface SessionState {
   loading: boolean;

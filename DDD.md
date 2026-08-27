@@ -260,7 +260,7 @@ Estimasi berikut memakai asumsi yang dinyatakan terbuka; ganti dengan angka nyat
 
 Migrasi di repositori (tujuh berkas): `20260825000001_init_schema`, `20260825000002_rls_policies`, `20260825000003_seed_master_data`, `20260826000001_avatar_chat`, `20260826000002_profile_manager_not_self`, `20260827000001_approval_separation_of_duties`, `20260827000002_timesheet_transition_guard`.
 
-**Status penerapan.** Seluruh berkas terverifikasi dapat diterapkan berurutan pada PostgreSQL 16 bersih. Sampai dokumen ini ditulis, belum ada bukti migrasi pernah diterapkan ke project Supabase mana pun.
+**Status penerapan.** Seluruhnya sudah diterapkan ke project Supabase `tmzwlurjwantvuptpvpe` (PostgreSQL 17, region ap-northeast-2) pada 27 Agustus 2026, dan tetap diverifikasi ulang pada PostgreSQL 16 bersih oleh `npm run test:db`.
 
 ---
 

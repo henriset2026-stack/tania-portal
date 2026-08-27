@@ -13,7 +13,7 @@ import { getSupabase } from "@/lib/supabase";
 import { useQuery } from "@/lib/use-query";
 import { cn } from "@/lib/cn";
 import { date, dateTime } from "@/lib/format";
-import type { Activity, ActivityCategory, AuditLogRow, Project } from "@/lib/database.types";
+import type { Activity, ActivityCategory, AuditLogRow, Project } from "@/lib/db";
 
 const PAGE = 25; // every list query is paginated (AGENTS.md / TRD DA-1)
 

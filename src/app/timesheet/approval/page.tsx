@@ -12,7 +12,7 @@ import { useSession } from "@/components/session-provider";
 import { useQuery } from "@/lib/use-query";
 import { getSupabase } from "@/lib/supabase";
 import { hours as fmtHours, percent } from "@/lib/format";
-import type { ActivityCategory } from "@/lib/database.types";
+import type { ActivityCategory } from "@/lib/db";
 import { addDays, startOfWeek, toKey, weekLabel } from "@/lib/week";
 
 const OVER_WEEK = 40; // soft warning threshold, flagged not blocked

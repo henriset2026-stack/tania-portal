@@ -1,4 +1,4 @@
-import type { UserRole } from "./database.types";
+import type { UserRole } from "./db";
 
 export interface NavItem {
   href: string;
