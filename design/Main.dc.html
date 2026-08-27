@@ -1,0 +1,184 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>
+    *{box-sizing:border-box}
+    body{margin:0;background:#f8fafc;color:#020817;
+      font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+      font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased}
+    a{color:#0f172a;text-decoration:none} a:hover{color:#334155}
+    .app{display:flex;height:900px;overflow:hidden}
+    .side{width:220px;flex-shrink:0;background:#0f172a;color:#cbd5e1;display:flex;flex-direction:column;padding:16px 0}
+    .brand{display:flex;align-items:center;gap:9px;padding:4px 18px 18px}
+    .brand b{color:#fff;font-size:16px;letter-spacing:.02em}
+    .nav{display:flex;flex-direction:column;gap:2px;padding:0 10px}
+    .nav a{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:6px;color:#94a3b8;font-size:13.5px}
+    .nav a.on{background:#1e293b;color:#fff;font-weight:500}
+    .nav .sep{height:1px;background:#1e293b;margin:10px 10px}
+    .main{flex:1;display:flex;flex-direction:column;min-width:0}
+    .top{height:56px;flex-shrink:0;background:#fff;border-bottom:1px solid #e2e8f0;
+      display:flex;align-items:center;justify-content:space-between;padding:0 24px}
+    .h1{font-size:16px;font-weight:600;letter-spacing:-.01em}
+    .body{flex:1;overflow:hidden;padding:24px;display:flex;flex-direction:column;gap:16px}
+    .card{background:#fff;border:1px solid #e2e8f0;border-radius:8px}
+    .cardhd{padding:14px 16px;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between}
+    .cardhd h3{margin:0;font-size:13.5px;font-weight:600}
+    .sub{color:#64748b;font-size:12px}
+    .btn{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 14px;border-radius:6px;
+      border:1px solid #e2e8f0;background:#fff;font-size:13px;font-weight:500;color:#0f172a}
+    .btn.pri{background:#0f172a;color:#f8fafc;border-color:#0f172a}
+    .btn.sm{height:28px;padding:0 10px;font-size:12.5px}
+    .btn.dgr{color:#b91c1c;border-color:#fecaca;background:#fff}
+    .pill{display:inline-flex;align-items:center;gap:5px;height:22px;padding:0 8px;border-radius:999px;
+      font-size:11.5px;font-weight:500;border:1px solid #e2e8f0;background:#f8fafc;color:#475569}
+    .pill.warn{background:#fffbeb;border-color:#fde68a;color:#92400e}
+    .pill.bad{background:#fef2f2;border-color:#fecaca;color:#b91c1c}
+    .pill.ok{background:#f0fdf4;border-color:#bbf7d0;color:#166534}
+    table{width:100%;border-collapse:collapse;font-size:13px}
+    th{text-align:left;font-weight:500;color:#64748b;font-size:11.5px;letter-spacing:.03em;
+      text-transform:uppercase;padding:9px 12px;border-bottom:1px solid #e2e8f0;background:#f8fafc}
+    td{padding:9px 12px;border-bottom:1px solid #f1f5f9;font-variant-numeric:tabular-nums}
+    tr:last-child td{border-bottom:none}
+    .num{text-align:right;font-variant-numeric:tabular-nums}
+    .note{font-size:11.5px;color:#64748b}
+    .bar{height:7px;border-radius:999px;background:#e2e8f0;overflow:hidden;min-width:88px}
+    .bar i{display:block;height:100%;border-radius:999px;background:#0f172a}
+
+
+  </style>
+</helmet>
+<div class="app">
+  <aside class="side">
+    <div class="brand">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" fill="#e4002b"></rect><path d="M7 8.5h10M12 8.5V16" stroke="#fff" stroke-width="1.9" stroke-linecap="round"></path></svg>
+      <b>TANIA</b>
+    </div>
+    <nav class="nav">
+      <a href="#"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h7V3H3v9Zm11 9h7v-9h-7v9ZM3 21h7v-6H3v6Zm11-12h7V3h-7v6Z"></path></svg>Dashboard</a>
+      <a href="#" class="on"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3v3m10-3v3M3.5 9.5h17M4.5 5.5h15v15h-15z"></path></svg>Timesheet</a>
+      <a href="#"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-8 8a8 8 0 0 1 16 0"></path></svg>Talent</a>
+      <a href="#"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V9m5 11V4m5 16v-7m5 7V7"></path></svg>Workload</a>
+      <a href="#"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 3 8v8l9 5 9-5V8l-9-5Zm0 5v9"></path></svg>Feasibility</a>
+    </nav>
+  </aside>
+  <div class="main">
+    <header class="top">
+      <div style="display:flex;align-items:center;gap:14px">
+        <span class="h1">Timesheet</span>
+        <div style="display:flex;align-items:center;gap:2px;border:1px solid #e2e8f0;border-radius:6px;background:#fff;height:32px;padding:0 4px">
+          <span style="padding:0 6px;color:#94a3b8">‹</span>
+          <span style="font-size:13px;font-weight:500;padding:0 4px">24 – 30 Agu 2026</span>
+          <span style="padding:0 6px;color:#94a3b8">›</span>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span class="sub">Andi Prasetyo · talent</span>
+        <div style="width:28px;height:28px;border-radius:999px;background:#e2e8f0;display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:600;color:#475569">AP</div>
+      </div>
+    </header>
+
+    <div class="body">
+
+      <div class="card" style="padding:14px 16px;display:flex;align-items:center;gap:20px">
+        <div style="min-width:190px">
+          <div class="sub">Utilisasi Anda — Agustus 2026</div>
+          <div style="display:flex;align-items:baseline;gap:7px;margin-top:2px">
+            <span style="font-size:24px;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums">71,4%</span>
+            <span class="sub">120 / 168 jam</span>
+          </div>
+        </div>
+        <div class="bar" style="flex:1;height:9px"><i style="width:71.4%"></i></div>
+        <div class="note" style="max-width:250px;text-align:right">
+          kapasitas 8 jam × Sen–Jum<br>libur nasional belum dikecualikan
+        </div>
+      </div>
+
+      <div class="card" style="border-color:#fecaca;background:#fef2f2;padding:11px 14px;display:flex;gap:9px;align-items:flex-start">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#b91c1c" stroke-width="1.8" style="flex-shrink:0;margin-top:2px" aria-hidden="true">
+          <path d="M12 3 2 20h20L12 3Z" stroke-linejoin="round"></path><path d="M12 10v4.5M12 17v.6" stroke-linecap="round"></path>
+        </svg>
+        <div style="font-size:12.5px;color:#7f1d1d;line-height:1.5">
+          <strong style="font-weight:600">Ditolak — Rabu, P2 Presales.</strong>
+          “Jam presales masuk ke kode proyek yang salah, mohon pindah ke P3.” — Sari W., 25 Agu 14:10
+        </div>
+      </div>
+
+      <div class="card" style="overflow:hidden">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:290px">Proyek / Aktivitas</th>
+              <th class="num" style="width:74px">Sen 24</th>
+              <th class="num" style="width:74px">Sel 25</th>
+              <th class="num" style="width:74px">Rab 26</th>
+              <th class="num" style="width:74px">Kam 27</th>
+              <th class="num" style="width:74px">Jum 28</th>
+              <th class="num" style="width:84px;background:#f1f5f9">Total</th>
+              <th style="width:40px"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><div style="font-weight:500">P1 · Data Warehouse Bank X</div><div class="note">Delivery · billable</div></td>
+              <td class="num">6</td><td class="num">6</td><td class="num">6</td><td class="num">6</td><td class="num">4</td>
+              <td class="num" style="background:#f8fafc;font-weight:600">28</td>
+              <td></td>
+            </tr>
+            <tr style="background:#fff7f7">
+              <td><div style="font-weight:500">P2 · Presales Telkomsel</div><div class="note" style="color:#b91c1c">Presales · ditolak — perbaiki lalu submit ulang</div></td>
+              <td class="num">2</td><td class="num">2</td>
+              <td class="num" style="outline:2px solid #ef4444;outline-offset:-2px;border-radius:4px;font-weight:600">2</td>
+              <td class="num">2</td><td class="num">2</td>
+              <td class="num" style="background:#f8fafc;font-weight:600">10</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td><div style="font-weight:500">Internal</div><div class="note">Internal · non-billable</div></td>
+              <td class="num">–</td><td class="num">–</td><td class="num">2</td><td class="num">–</td><td class="num">2</td>
+              <td class="num" style="background:#f8fafc;font-weight:600">4</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td colspan="8" style="padding:8px 12px">
+                <button class="btn sm" style="color:#475569">+ Tambah baris</button>
+              </td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr style="background:#f8fafc">
+              <td style="font-weight:600;border-top:1px solid #e2e8f0">Total per hari</td>
+              <td class="num" style="font-weight:600;border-top:1px solid #e2e8f0">8</td>
+              <td class="num" style="font-weight:600;border-top:1px solid #e2e8f0">8</td>
+              <td class="num" style="font-weight:600;border-top:1px solid #e2e8f0">10</td>
+              <td class="num" style="font-weight:600;border-top:1px solid #e2e8f0">8</td>
+              <td class="num" style="font-weight:600;border-top:1px solid #e2e8f0">8</td>
+              <td class="num" style="font-weight:700;border-top:1px solid #e2e8f0;background:#f1f5f9">42</td>
+              <td style="border-top:1px solid #e2e8f0"></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:auto">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span class="pill">Draft</span>
+          <span class="note">Tersimpan otomatis 14:32</span>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn">Simpan draft</button>
+          <button class="btn pri">Submit minggu ini</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

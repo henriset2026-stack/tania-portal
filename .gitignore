@@ -15,3 +15,6 @@ out/
 
 # Supabase local
 supabase/.temp/
+
+# Seeded design canvas payload (2 MB build output — re-seed from design/*.dc.html)
+design/tania-portal-ui.html

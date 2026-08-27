@@ -1,0 +1,22 @@
+{
+  "artboards": [
+    { "file": "Login.dc.html",       "x": 0,    "y": 0,    "w": 1440, "h": 900, "title": "Login" },
+    { "file": "Dashboard.dc.html",   "x": 1520, "y": 0,    "w": 1440, "h": 900, "title": "Dashboard eksekutif" },
+    { "file": "Main.dc.html",        "x": 3040, "y": 0,    "w": 1440, "h": 900, "title": "Timesheet mingguan" },
+    { "file": "Approval.dc.html",    "x": 0,    "y": 1020, "w": 1440, "h": 900, "title": "Approval timesheet" },
+    { "file": "Workload.dc.html",    "x": 1520, "y": 1020, "w": 1440, "h": 900, "title": "Workload & heatmap" },
+    { "file": "Feasibility.dc.html", "x": 3040, "y": 1020, "w": 1440, "h": 900, "title": "Feasibility scoring" },
+    { "file": "Budget.dc.html",      "x": 1520, "y": 2040, "w": 1440, "h": 900, "title": "Budget control" }
+  ],
+  "annotations": [
+    { "id": "note-timesheet", "x": 3040, "y": -150, "w": 420,
+      "text": "Layar terpenting. Prinsip 1: isi mingguan < 3 menit — satu grid, tanpa dialog per baris.\nPrinsip 2: utilisasi pribadi tampil di sini, supaya yang memasukkan data juga mendapat sesuatu." },
+    { "id": "note-workload", "x": 1520, "y": 870, "w": 420,
+      "text": "SF-1.5: view utilization_monthly menghilangkan orang tanpa baris timesheet. Dewi Anggraini sengaja tetap ditampilkan pada 0% — tanpa itu, yang tidak mengisi justru menghilang dari layar." },
+    { "id": "note-budget", "x": 3040, "y": 2040, "w": 420,
+      "text": "Sisa = Plan - Realisasi. Komitmen tidak mengurangi sisa, jadi kalimat penjelas di bawah tabel wajib ada — kombinasi kolom ini hampir pasti disalahartikan tanpa itu." },
+    { "id": "note-system", "x": 0, "y": -150, "w": 420,
+      "text": "shadcn/ui default (slate) + Tailwind, sesuai AGENTS.md. Radius 8px, border #e2e8f0, primary #0f172a. Merah Telkom hanya pada logo. UI Bahasa Indonesia, desktop 1440px." }
+  ],
+  "launch": { "view": "canvas" }
+}

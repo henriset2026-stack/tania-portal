@@ -1,0 +1,148 @@
+<div class="app">
+<!--NAV active="workload" hide="admin"-->
+  <div class="main">
+    <header class="top">
+      <div style="display:flex;align-items:center;gap:14px">
+        <span class="h1">Workload</span>
+        <div style="display:flex;align-items:center;gap:6px;border:1px solid #e2e8f0;border-radius:6px;background:#fff;height:32px;padding:0 10px;font-size:13px;font-weight:500">Agustus 2026 <span style="color:#94a3b8">▾</span></div>
+        <div style="display:flex;align-items:center;gap:6px;border:1px solid #e2e8f0;border-radius:6px;background:#fff;height:32px;padding:0 10px;font-size:13px;font-weight:500">Semua squad <span style="color:#94a3b8">▾</span></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <button class="btn sm">Export Excel</button>
+        <span class="sub">Sari Wulandari · manager</span>
+      </div>
+    </header>
+
+    <div class="body">
+
+      <div class="card" style="overflow:hidden">
+        <div class="cardhd">
+          <h3>Alokasi rencana vs utilisasi aktual</h3>
+          <span class="note">Alokasi = rencana · Utilisasi = jam approved ÷ kapasitas</span>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Talent</th><th style="width:110px">Squad</th>
+              <th class="num" style="width:88px">Alokasi</th>
+              <th class="num" style="width:92px">Utilisasi</th>
+              <th style="width:210px">Aktual</th>
+              <th class="num" style="width:96px">Jam approved</th>
+              <th style="width:150px">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><div style="font-weight:500">Andi Prasetyo</div><div class="note">Engineer · grade 4</div></td>
+              <td class="sub">Platform</td>
+              <td class="num">100%</td><td class="num" style="font-weight:600">71,4%</td>
+              <td><div class="bar" style="width:190px"><i style="width:71.4%"></i></div></td>
+              <td class="num">120,0</td><td><span class="pill ok">normal</span></td>
+            </tr>
+            <tr style="background:#fffbeb">
+              <td><div style="font-weight:500">Budi Santoso</div><div class="note">Engineer · grade 5</div></td>
+              <td class="sub">Data &amp; AI</td>
+              <td class="num" style="color:#92400e;font-weight:600">120% ⚠</td><td class="num" style="font-weight:600">95,2%</td>
+              <td><div class="bar" style="width:190px"><i style="width:95.2%;background:#f59e0b"></i></div></td>
+              <td class="num">160,0</td><td><span class="pill warn">overload alokasi</span></td>
+            </tr>
+            <tr>
+              <td><div style="font-weight:500">Citra Dewi</div><div class="note">Analyst · grade 3</div></td>
+              <td class="sub">Data &amp; AI</td>
+              <td class="num">80%</td><td class="num" style="font-weight:600">88,1%</td>
+              <td><div class="bar" style="width:190px"><i style="width:88.1%"></i></div></td>
+              <td class="num">148,0</td><td><span class="pill ok">normal</span></td>
+            </tr>
+            <tr style="background:#fef2f2">
+              <td><div style="font-weight:500">Dewi Anggraini</div><div class="note">Designer · grade 3</div></td>
+              <td class="sub">Platform</td>
+              <td class="num">100%</td><td class="num" style="font-weight:600;color:#b91c1c">0,0%</td>
+              <td><div class="bar" style="width:190px"><i style="width:0%"></i></div></td>
+              <td class="num" style="color:#b91c1c">0,0</td><td><span class="pill bad">belum ada timesheet</span></td>
+            </tr>
+            <tr>
+              <td><div style="font-weight:500">Eka Putra</div><div class="note">Engineer · grade 4</div></td>
+              <td class="sub">Integration</td>
+              <td class="num">60%</td><td class="num" style="font-weight:600">44,2%</td>
+              <td><div class="bar" style="width:190px"><i style="width:44.2%;background:#94a3b8"></i></div></td>
+              <td class="num">74,5</td><td><span class="pill">idle &lt; 60%</span></td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr style="background:#f8fafc">
+              <td colspan="3" style="font-weight:600;border-top:1px solid #e2e8f0">Rata-rata chapter</td>
+              <td class="num" style="font-weight:700;border-top:1px solid #e2e8f0">63,7%</td>
+              <td style="border-top:1px solid #e2e8f0"><div class="bar" style="width:190px"><i style="width:63.7%"></i></div></td>
+              <td class="num" style="font-weight:600;border-top:1px solid #e2e8f0">502,5</td>
+              <td style="border-top:1px solid #e2e8f0"></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 300px;gap:16px;flex:1;min-height:0">
+        <div class="card" style="display:flex;flex-direction:column">
+          <div class="cardhd"><h3>Heatmap utilisasi per squad</h3><span class="note">Mei – Agustus 2026</span></div>
+          <div style="padding:14px 16px;display:flex;flex-direction:column;gap:8px">
+            <div style="display:grid;grid-template-columns:110px repeat(4,minmax(0,1fr));gap:6px;align-items:center">
+              <span></span>
+              <span class="note" style="text-align:center">Mei</span><span class="note" style="text-align:center">Jun</span>
+              <span class="note" style="text-align:center">Jul</span><span class="note" style="text-align:center">Agu</span>
+            </div>
+            <div style="display:grid;grid-template-columns:110px repeat(4,minmax(0,1fr));gap:6px;align-items:center">
+              <span style="font-size:13px">Platform</span>
+              <div style="height:34px;border-radius:5px;background:#cbd5e1;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#0f172a">52%</div>
+              <div style="height:34px;border-radius:5px;background:#94a3b8;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#0f172a">64%</div>
+              <div style="height:34px;border-radius:5px;background:#64748b;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#fff">70%</div>
+              <div style="height:34px;border-radius:5px;background:#475569;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#fff">71%</div>
+            </div>
+            <div style="display:grid;grid-template-columns:110px repeat(4,minmax(0,1fr));gap:6px;align-items:center">
+              <span style="font-size:13px">Data &amp; AI</span>
+              <div style="height:34px;border-radius:5px;background:#94a3b8;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#0f172a">66%</div>
+              <div style="height:34px;border-radius:5px;background:#475569;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#fff">74%</div>
+              <div style="height:34px;border-radius:5px;background:#1e293b;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#fff">83%</div>
+              <div style="height:34px;border-radius:5px;background:#f59e0b;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#3f2b00">88% ⚠</div>
+            </div>
+            <div style="display:grid;grid-template-columns:110px repeat(4,minmax(0,1fr));gap:6px;align-items:center">
+              <span style="font-size:13px">Integration</span>
+              <div style="height:34px;border-radius:5px;background:#e2e8f0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#475569">41%</div>
+              <div style="height:34px;border-radius:5px;background:#cbd5e1;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#0f172a">55%</div>
+              <div style="height:34px;border-radius:5px;background:#cbd5e1;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#0f172a">57%</div>
+              <div style="height:34px;border-radius:5px;background:#94a3b8;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#0f172a">59%</div>
+            </div>
+            <div style="display:grid;grid-template-columns:110px repeat(4,minmax(0,1fr));gap:6px;align-items:center">
+              <span style="font-size:13px">Experience</span>
+              <div style="height:34px;border-radius:5px;background:#e2e8f0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#475569">38%</div>
+              <div style="height:34px;border-radius:5px;background:#e2e8f0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#475569">42%</div>
+              <div style="height:34px;border-radius:5px;background:#cbd5e1;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#0f172a">49%</div>
+              <div style="height:34px;border-radius:5px;background:#e2e8f0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#475569">44%</div>
+            </div>
+          </div>
+          <div style="padding:10px 16px;border-top:1px solid #f1f5f9;margin-top:auto;display:flex;gap:16px;align-items:center">
+            <span class="note">kapasitas 8 jam × Sen–Jum · libur nasional belum dikecualikan</span>
+            <span class="note" style="margin-left:auto">Angka selalu ditulis — warna bukan satu-satunya penanda</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="cardhd"><h3>Perlu perhatian</h3></div>
+          <div style="padding:12px 16px;display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;gap:9px">
+              <span class="pill warn" style="flex-shrink:0">⚠</span>
+              <div style="font-size:12.5px;line-height:1.5"><strong style="font-weight:600">Budi Santoso</strong> dialokasikan 120% — melebihi ambang 100%.</div>
+            </div>
+            <div style="display:flex;gap:9px">
+              <span class="pill bad" style="flex-shrink:0">⛔</span>
+              <div style="font-size:12.5px;line-height:1.5"><strong style="font-weight:600">Dewi Anggraini</strong> dialokasikan 100% tetapi belum ada timesheet approved bulan ini.</div>
+            </div>
+            <div style="display:flex;gap:9px">
+              <span class="pill" style="flex-shrink:0">i</span>
+              <div style="font-size:12.5px;line-height:1.5"><strong style="font-weight:600">Experience</strong> di bawah 50% empat bulan berturut — kapasitas menganggur.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
