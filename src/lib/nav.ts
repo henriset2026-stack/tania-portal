@@ -31,15 +31,13 @@ export const NAV: readonly NavItem[] = [
     href: "/workload",
     label: "Workload",
     roles: ["executive", "chapter_lead", "manager", "pm", "admin"],
-    planned: true,
   },
-  { href: "/feasibility", label: "Feasibility", roles: ALL, planned: true },
+  { href: "/feasibility", label: "Feasibility", roles: ALL },
   {
     // `talent` has no access to budget data at all (AGENTS.md security rule 5).
     href: "/budget",
     label: "Budget",
     roles: ["executive", "chapter_lead", "manager", "pm", "admin"],
-    planned: true,
   },
   { href: "/admin", label: "Admin", roles: ["admin"] },
 ];

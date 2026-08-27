@@ -258,8 +258,8 @@ Menambah tool HARUS mengikuti pola yang sama: query lewat klien ber-JWT pemanggi
 | `/timesheet/approval` | TS-02 | manager, chapter_lead, admin | `timesheets` status `submitted`, `profiles` | **dibangun** |
 | `/talent` | TM | semua | `profiles`, `skills`, `profile_skills`, `allocations`, `utilization_monthly` | **dibangun** |
 | `/workload` | WA | manager ke atas | `allocations`, `utilization_monthly`, `profiles` | **dibangun** |
-| `/feasibility` | PF | semua (ajukan: pm ke atas) | `feasibility_cases` | fase 4 |
-| `/budget` | BC | manager ke atas — **`talent` tidak** | `budget_lines`, `budget_summary`, `budget_entries` | fase 4 |
+| `/feasibility` | PF | semua (ajukan: pm ke atas) | `feasibility_cases`, `skills`, `profile_skills`, `allocations` | **dibangun** |
+| `/budget` | BC | manager ke atas — **`talent` tidak** | `budget_lines`, `budget_summary`, `budget_entries` | **dibangun** |
 | `/admin` | XM-05 | admin | master data, `audit_log` | **dibangun** |
 | `/profil` | TM-01 | semua (milik sendiri) | `profiles` | **dibangun** |
 

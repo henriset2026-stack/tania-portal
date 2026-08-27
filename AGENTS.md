@@ -85,9 +85,9 @@ The whole architecture rests on one decision: **there is no application server, 
 
 ## Commands
 
-Phases 1–3 are built: `/login`, `/dashboard`, `/profil`, `/admin`, `/timesheet`,
-`/timesheet/approval`, `/talent`, `/workload`. Feasibility and Budget remain
-disabled "segera" entries until phase 4.
+Phases 1–4 are built: every module route exists except the executive
+dashboard, which stays a phase-1 placeholder until phase 5 (XM-01 needs
+utilisation and budget data to exist first).
 
 Talent detail is `/talent/?id=…`, not `/talent/[id]` — a dynamic segment needs
 `generateStaticParams()` under `output: "export"` and the ids are runtime-only.
