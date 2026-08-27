@@ -200,7 +200,7 @@ Kolom **MVP** menyatakan cakupan rilis pertama: ✅ penuh · ◐ sebagian (lihat
 | XM-04 | Notifications | Notifikasi in-portal dan email untuk approval, pengingat, dan alert | Should | ⬜ |
 | XM-05 | Audit log | Seluruh aksi create/update/approve tercatat beserta user, timestamp, dan nilai before/after | Must | ✅ |
 
-◐ **XM-03** — MVP hanya export Excel (library `xlsx`). Export PDF belum ada; pada arsitektur static export, PDF harus dibuat di sisi browser.
+◐ **XM-03** — MVP hanya export Excel, memakai penulis `.xlsx` tanpa dependensi di `src/lib/xlsx.ts` (paket `xlsx` di npm memiliki dua advisory high yang tidak diperbaiki). Export PDF belum ada; pada arsitektur static export, PDF harus dibuat di sisi browser.
 
 **Catatan penting soal XM-05.** Di dokumen v1.0, XM-05 adalah **Audit log** — dan itulah yang dipakai di komentar skema (`-- XM-05: audit log`). Tabel fase pada `docs/Panduan_Development_TANIA_ClaudeCode.md` sempat memakai XM-05 untuk "admin master data"; itu keliru. Fungsi admin master data adalah bagian dari TS-03 (daftar terkendali proyek & aktivitas), bukan requirement XM tersendiri.
 

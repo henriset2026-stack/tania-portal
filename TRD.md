@@ -42,7 +42,7 @@ Untuk menghindari duplikasi yang pasti berujung pada saling bertentangan, batas 
 | Deno | runtime Supabase Edge Functions | Hanya untuk `tania-assistant` |
 | Supabase CLI | ≥ 2.x | Untuk `db push` dan `functions deploy` |
 
-**Aturan dependensi.** Setiap penambahan dependensi HARUS dinilai dampaknya terhadap ukuran bundle. Library berat (`recharts`, `xlsx`) HARUS dimuat lewat `dynamic import`.
+**Aturan dependensi.** Setiap penambahan dependensi HARUS dinilai dampaknya terhadap ukuran bundle. Library berat (`recharts`) HARUS dimuat lewat `dynamic import`. Export Excel memakai penulis `.xlsx` tanpa dependensi di `src/lib/xlsx.ts` — paket `xlsx` di npm tidak dipakai karena dua advisory high yang tidak diperbaiki dan ukurannya ~900 KB.
 
 ---
 
@@ -253,7 +253,7 @@ Menambah tool HARUS mengikuti pola yang sama: query lewat klien ber-JWT pemanggi
 | Rute | Modul | Peran yang melihat menu | Sumber data utama | Status |
 |---|---|---|---|---|
 | `/login` | — | publik | Supabase Auth | **dibangun** |
-| `/dashboard` | XM-01 | semua | `utilization_monthly`, `budget_summary`, `feasibility_cases`, `timesheets` | placeholder fase 1 |
+| `/dashboard` | XM-01 | semua | `utilization_monthly`, `budget_summary`, `feasibility_cases`, `timesheets`, `profiles`, `allocations` | **dibangun** |
 | `/timesheet` | TS | semua (isi milik sendiri) | `timesheets`, `projects`, `activities`, `utilization_monthly` | **dibangun** |
 | `/timesheet/approval` | TS-02 | manager, chapter_lead, admin | `timesheets` status `submitted`, `profiles` | **dibangun** |
 | `/talent` | TM | semua | `profiles`, `skills`, `profile_skills`, `allocations`, `utilization_monthly` | **dibangun** |

@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Table, Td, Th } from "@/components/ui/table";
 import { Field, Input } from "@/components/ui/field";
 import { StateBoundary } from "@/components/state-boundary";
+import { ExportButton } from "@/components/export-button";
 import { useSession } from "@/components/session-provider";
 import { useQuery } from "@/lib/use-query";
 import { getSupabase } from "@/lib/supabase";
@@ -115,6 +116,26 @@ export default function BudgetPage() {
     <AppShell
       title="Budget Control"
       actions={
+        <div className="flex items-center gap-2">
+        <ExportButton
+          filename={`tania-budget-${year}`}
+          sheetName={`Budget ${year}`}
+          disabled={summary.rows.length === 0}
+          rows={() => [
+            ["Program", "Kategori", "Plan", "Komitmen", "Realisasi", "Sisa", "Serapan %"],
+            ...summary.rows.map((r) => [
+              r.program, r.category,
+              Number(r.plan_amount), Number(r.committed_amount),
+              Number(r.realized_amount), Number(r.remaining_amount),
+              Number(absorbedOf(r).toFixed(1)),
+            ]),
+            [],
+            ["TOTAL", "", totals.plan, totals.committed, totals.realized, totals.remaining,
+              Number(absorbed.toFixed(1))],
+            [],
+            ["Sisa = Plan - Realisasi. Komitmen tidak mengurangi sisa."],
+          ]}
+        />
         <select
           aria-label="Tahun fiskal"
           value={year}
@@ -127,6 +148,7 @@ export default function BudgetPage() {
             </option>
           ))}
         </select>
+        </div>
       }
     >
       <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">

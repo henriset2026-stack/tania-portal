@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Table, Td, Th } from "@/components/ui/table";
 import { Field, Input } from "@/components/ui/field";
 import { StateBoundary } from "@/components/state-boundary";
+import { ExportButton } from "@/components/export-button";
 import { useSession } from "@/components/session-provider";
 import { useQuery } from "@/lib/use-query";
 import { getSupabase } from "@/lib/supabase";
@@ -173,6 +174,27 @@ export default function WorkloadPage() {
       title="Workload"
       actions={
         <div className="flex items-center gap-2">
+          <ExportButton
+            filename={`tania-workload-${month.slice(0, 7)}`}
+            sheetName="Workload"
+            disabled={roster.length === 0}
+            rows={() => [
+              ["Talent", "Squad", "Alokasi %", "Utilisasi %", "Jam approved", "Kapasitas"],
+              ...roster.map((p) => {
+                const u = utilMap.get(utilKey(p.id, month));
+                return [
+                  p.full_name,
+                  p.squad ?? "",
+                  allocByPerson.get(p.id) ?? 0,
+                  Number(Number(u?.utilization_pct ?? 0).toFixed(1)),
+                  Number(u?.approved_hours ?? 0),
+                  cap,
+                ];
+              }),
+              [],
+              ["Rata-rata", "", "", Number(chapterPct.toFixed(1)), chapterHours, roster.length * cap],
+            ]}
+          />
           <input
             type="month"
             aria-label="Periode"

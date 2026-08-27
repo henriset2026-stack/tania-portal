@@ -75,7 +75,8 @@ The whole architecture rests on one decision: **there is no application server, 
 
 ## Performance / free-tier discipline
 
-- Keep the bundle small: `dynamic import` for chart libraries (recharts), `xlsx`, and anything heavy. Check bundle impact before adding a dependency.
+- Keep the bundle small: `dynamic import` for chart libraries (recharts) and anything heavy. Check bundle impact before adding a dependency — shared first-load JS is already ~281 KB gzipped against the 300 KB budget in SRS NFR-3.
+- Excel export uses `src/lib/xlsx.ts`, a ~200-line dependency-free writer, loaded on demand. **Do not replace it with the `xlsx` npm package**: the last published version (0.18.5) carries two unfixed high-severity advisories and would fail NFR-11, and it is ~900 KB.
 - Paginate every list query (`.range()`); never `select('*')` on timesheets or audit_log without filters — Supabase free tier has a 5 GB egress cap.
 - Attachment uploads go to the `attachments` bucket, max 10 MB per file, validate size client-side before upload.
 - Supabase free tier auto-pauses after 7 days idle; `.github/workflows/keepalive.yml` pings every 3 days. Don't remove it, and don't let it fail silently — it exits non-zero on any non-200.
@@ -85,9 +86,7 @@ The whole architecture rests on one decision: **there is no application server, 
 
 ## Commands
 
-Phases 1–4 are built: every module route exists except the executive
-dashboard, which stays a phase-1 placeholder until phase 5 (XM-01 needs
-utilisation and budget data to exist first).
+All five MVP phases are built. Every route in the page map exists.
 
 Talent detail is `/talent/?id=…`, not `/talent/[id]` — a dynamic segment needs
 `generateStaticParams()` under `output: "export"` and the ids are runtime-only.

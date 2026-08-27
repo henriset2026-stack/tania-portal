@@ -79,6 +79,13 @@ interface AllocRow {
   profile_id: string;
   percent: number;
 }
+interface LinkedEntry {
+  id: string;
+  entry_type: "commitment" | "realization";
+  amount: number;
+  description: string | null;
+  entry_date: string;
+}
 
 export default function FeasibilityPage() {
   return (
@@ -499,6 +506,8 @@ function CaseDetail({
         <div className="flex flex-col gap-4">
           <ResourceCheck required={row.required_competencies} />
 
+          <LinkedBudget caseId={row.id} />
+
           <Card className={decided ? undefined : "border-slate-300"}>
             <CardHeader>
               <CardTitle>Keputusan</CardTitle>
@@ -651,6 +660,75 @@ function ResourceCheck({ required }: { required: string[] }) {
         <p className="border-t border-slate-100 px-4 py-2.5 text-[11.5px] text-muted-foreground">
           &quot;Tersedia&quot; = memiliki kompetensi pada level ≥ {MIN_LEVEL} dan alokasi bulan ini di bawah 100%.
         </p>
+      </StateBoundary>
+    </Card>
+  );
+}
+
+/* ------------------------------------------------------- XM-02 traceback */
+
+/**
+ * Budget entries created from this feasibility case. This is the visible end
+ * of the XM-02 chain: timesheets feed workload, workload feeds the resource
+ * check, and an approved case turns into budget commitments carrying
+ * feasibility_case_id back to here.
+ *
+ * `talent` cannot read budget_entries at all, so zero rows is also what a
+ * talent sees — the copy says "not visible to you" rather than "none".
+ */
+function LinkedBudget({ caseId }: { caseId: string }) {
+  const { profile } = useSession();
+  const noAccess = profile?.role === "talent";
+
+  const entries = useQuery<LinkedEntry>(
+    () =>
+      getSupabase()
+        .from("budget_entries")
+        .select("id, entry_type, amount, description, entry_date")
+        .eq("feasibility_case_id", caseId)
+        .order("entry_date", { ascending: false })
+        .range(0, 49)
+        .returns<LinkedEntry[]>(),
+    [caseId],
+  );
+
+  if (noAccess) return null;
+
+  const total = entries.rows.reduce((s, e) => s + Number(e.amount), 0);
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Komitmen anggaran</CardTitle>
+        <span className="text-[11.5px] text-muted-foreground">XM-02</span>
+      </CardHeader>
+      <StateBoundary
+        loading={entries.loading}
+        error={entries.error}
+        empty={entries.rows.length === 0}
+        emptyMessage="Belum ada entry anggaran yang tertaut ke kasus ini."
+        onRetry={entries.reload}
+      >
+        <ul className="flex flex-col divide-y divide-slate-100">
+          {entries.rows.map((e) => (
+            <li key={e.id} className="flex items-center justify-between px-4 py-2.5">
+              <div>
+                <div className="text-[13px]">
+                  {e.entry_type === "commitment" ? "Komitmen" : "Realisasi"}
+                </div>
+                <div className="text-[11.5px] text-muted-foreground">
+                  {date(e.entry_date)}
+                  {e.description ? ` · ${e.description}` : ""}
+                </div>
+              </div>
+              <span className="tabular text-[13px] font-medium">{moneyCompact(e.amount)}</span>
+            </li>
+          ))}
+        </ul>
+        <div className="flex items-center justify-between border-t border-slate-100 px-4 py-2.5">
+          <span className="text-[12px] text-muted-foreground">Total tertaut</span>
+          <span className="tabular text-[13px] font-semibold">{moneyCompact(total)}</span>
+        </div>
       </StateBoundary>
     </Card>
   );
