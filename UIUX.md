@@ -70,6 +70,8 @@ Dashboard menampilkan kartu yang berbeda per peran; talent melihat versi ringkas
 
 ## 4. Inventaris Halaman
 
+> Detail talent dan feasibility memakai query string (`?id=`), bukan segmen dinamis `[id]`: static export menuntut `generateStaticParams()` dan id-nya baru diketahui saat runtime.
+
 | Rute | Tujuan | Aksi utama | Sumber data |
 |---|---|---|---|
 | `/login` | Masuk | Email + kata sandi | Supabase Auth |
@@ -77,7 +79,7 @@ Dashboard menampilkan kartu yang berbeda per peran; talent melihat versi ringkas
 | `/timesheet` | Isi jam mingguan | Simpan draft → Submit | `timesheets`, `projects`, `activities` |
 | `/timesheet/approval` | Antrean approval | Approve / Reject + catatan | `timesheets` status `submitted` |
 | `/talent` | Direktori & competency matrix | Cari talent per skill | `profiles`, `skills`, `profile_skills` |
-| `/talent/[id]` | Profil & riwayat penugasan | Ubah skill sendiri | `profile_skills`, `allocations`, `timesheets` |
+| `/talent/?id=` | Profil & riwayat penugasan | Ubah skill sendiri | `profile_skills`, `allocations`, `utilization_monthly` |
 | `/workload` | Utilisasi & alokasi | Ubah alokasi | `allocations`, `utilization_monthly` |
 | `/feasibility` | Pipeline kandidat proyek | Ajukan case | `feasibility_cases` |
 | `/feasibility/[id]` | Scoring & keputusan | Isi skor; go/no-go/hold | `feasibility_cases` |

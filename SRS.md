@@ -127,6 +127,7 @@ Daftar lengkap requirement ada di `PRD.md` §6. Bagian ini memformalkan **perila
 - SF-1.3 — Sistem HARUS menghitung `utilization_pct` = `approved_hours` ÷ `capacity_hours` × 100, dibulatkan ke 1 angka desimal.
 - SF-1.4 — Bila `capacity_hours` = 0, sistem HARUS menghasilkan NULL **tanpa** kesalahan pembagian nol.
 - SF-1.5 — Talent yang **tidak memiliki satu pun baris timesheet** pada suatu bulan tidak muncul di view. Antarmuka HARUS menampilkannya sebagai utilisasi 0%, bukan menghilangkannya dari daftar. *(Kegagalan memenuhi butir ini menyembunyikan justru orang yang paling perlu terlihat: yang tidak mengisi timesheet sama sekali.)*
+- SF-1.5b — Angka agregat per squad dan per chapter HARUS memakai **jumlah talent aktif** sebagai penyebut, bukan jumlah baris yang dikembalikan view. Merata-ratakan baris view menghasilkan angka yang justru **naik** ketika seseorang berhenti mengisi timesheet.
 - SF-1.6 — Alokasi (rencana) dan utilisasi (aktual) HARUS ditampilkan sebagai dua angka terpisah; salah satunya TIDAK BOLEH dipakai menggantikan yang lain.
 - SF-1.7 — Perhitungan HARUS idempoten: pembacaan berulang atas data yang sama menghasilkan nilai identik.
 - SF-1.8 — Antarmuka HARUS menyatakan asumsi A-1 (libur nasional belum dikecualikan) pada setiap tampilan utilisasi.

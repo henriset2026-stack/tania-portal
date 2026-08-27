@@ -58,6 +58,7 @@ The whole architecture rests on one decision: **there is no application server, 
   `supabase gen types typescript --linked > src/lib/database.types.ts`
   and fix all resulting type errors before finishing.
 - Dashboard data comes from views `utilization_monthly` (WA-02) and `budget_summary` (BC-05) — **query the views, don't re-aggregate in the client.** Both use `security_invoker = true` so the caller's RLS still applies.
+- **Never average `utilization_monthly` rows to get a squad or chapter figure.** The view joins from `timesheets`, so anyone with no rows is absent, not zero. Use the active roster as the denominator: `Σ approved_hours ÷ (headcount × capacityHours(month))` via `src/lib/capacity.ts`. Averaging the view rows for a 6-person chapter where 1 filed nothing reads 75% instead of 62.5% — and it *rises* as more people stop filing.
 - Derived numbers live in the database, never in the client:
   - `feasibility_cases.total_score` is a **generated column** (weights 25/25/20/15/15, ×20 → 0–100).
   - `committed_amount` / `realized_amount` are **never stored** on `budget_lines` — they come from `budget_entries` via `budget_summary`.
@@ -84,8 +85,12 @@ The whole architecture rests on one decision: **there is no application server, 
 
 ## Commands
 
-Phases 1–2 are built: `/login`, `/dashboard`, `/profil`, `/admin`, `/timesheet`,
-`/timesheet/approval`. Everything else is a disabled "segera" entry until its phase.
+Phases 1–3 are built: `/login`, `/dashboard`, `/profil`, `/admin`, `/timesheet`,
+`/timesheet/approval`, `/talent`, `/workload`. Feasibility and Budget remain
+disabled "segera" entries until phase 4.
+
+Talent detail is `/talent/?id=…`, not `/talent/[id]` — a dynamic segment needs
+`generateStaticParams()` under `output: "export"` and the ids are runtime-only.
 
 `supabase/` (Deno) and `design/` (canvas artboards) are excluded from
 `tsconfig.json` and `eslint.config.mjs` — different runtimes with their own
