@@ -83,6 +83,13 @@ The whole architecture rests on one decision: **there is no application server, 
 
 ## Commands
 
+Phase 1 (fondasi) is scaffolded: `/login`, `/dashboard`, `/profil`, `/admin`.
+Everything else is a disabled "segera" entry in the sidebar until its phase.
+
+`supabase/` (Deno) and `design/` (canvas artboards) are excluded from
+`tsconfig.json` and `eslint.config.mjs` — different runtimes with their own
+tooling. Do not remove those exclusions; `npm run build` fails without them.
+
 ```bash
 npm run dev          # local development
 npm run build        # static export → out/ (must pass before every commit)

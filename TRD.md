@@ -250,17 +250,18 @@ Menambah tool HARUS mengikuti pola yang sama: query lewat klien ber-JWT pemanggi
 
 ## 7. Peta Rute Frontend
 
-| Rute | Modul | Peran yang melihat menu | Sumber data utama |
-|---|---|---|---|
-| `/login` | — | publik | Supabase Auth |
-| `/dashboard` | XM-01 | semua | `utilization_monthly`, `budget_summary`, `feasibility_cases`, `timesheets` |
-| `/timesheet` | TS | semua (isi milik sendiri) | `timesheets`, `projects`, `activities` |
-| `/timesheet/approval` | TS-02 | manager, chapter_lead, admin | `timesheets` status `submitted` |
-| `/talent` | TM | semua | `profiles`, `skills`, `profile_skills` |
-| `/workload` | WA | manager ke atas | `allocations`, `utilization_monthly` |
-| `/feasibility` | PF | semua (ajukan: pm ke atas) | `feasibility_cases` |
-| `/budget` | BC | manager ke atas — **`talent` tidak** | `budget_lines`, `budget_summary`, `budget_entries` |
-| `/admin` | XM-05 | admin | master data, `audit_log` |
+| Rute | Modul | Peran yang melihat menu | Sumber data utama | Status |
+|---|---|---|---|---|
+| `/login` | — | publik | Supabase Auth | **dibangun** |
+| `/dashboard` | XM-01 | semua | `utilization_monthly`, `budget_summary`, `feasibility_cases`, `timesheets` | placeholder fase 1 |
+| `/timesheet` | TS | semua (isi milik sendiri) | `timesheets`, `projects`, `activities` | fase 2 |
+| `/timesheet/approval` | TS-02 | manager, chapter_lead, admin | `timesheets` status `submitted` | fase 2 |
+| `/talent` | TM | semua | `profiles`, `skills`, `profile_skills` | fase 3 |
+| `/workload` | WA | manager ke atas | `allocations`, `utilization_monthly` | fase 3 |
+| `/feasibility` | PF | semua (ajukan: pm ke atas) | `feasibility_cases` | fase 4 |
+| `/budget` | BC | manager ke atas — **`talent` tidak** | `budget_lines`, `budget_summary`, `budget_entries` | fase 4 |
+| `/admin` | XM-05 | admin | master data, `audit_log` | **dibangun** |
+| `/profil` | TM-01 | semua (milik sendiri) | `profiles` | **dibangun** |
 
 Menyembunyikan menu adalah kenyamanan tampilan. Rute yang diakses langsung tetap aman karena RLS mengembalikan nol baris — halaman HARUS menangani kondisi itu dengan pesan yang jelas, bukan layar kosong atau error.
 
