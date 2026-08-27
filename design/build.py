@@ -27,6 +27,7 @@ import re
 NAV_ITEMS = [
     ("dashboard",   "Dashboard",   "M3 12h7V3H3v9Zm11 9h7v-9h-7v9ZM3 21h7v-6H3v6Zm11-12h7V3h-7v6Z"),
     ("timesheet",   "Timesheet",   "M7 3v3m10-3v3M3.5 9.5h17M4.5 5.5h15v15h-15z"),
+    ("approval",    "Approval",    "M4 12.5 9.5 18 20 6.5"),
     ("talent",      "Talent",      "M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-8 8a8 8 0 0 1 16 0"),
     ("workload",    "Workload",    "M4 20V9m5 11V4m5 16v-7m5 7V7"),
     ("feasibility", "Feasibility", "M12 3 3 8v8l9 5 9-5V8l-9-5Zm0 5v9"),
