@@ -51,6 +51,11 @@ export type Milestone = Tables<"project_milestones">;
 export type ProjectRisk = Tables<"project_risks">;
 export type ProjectIssue = Tables<"project_issues">;
 
+/* ------------------------------------------------- talent journey (TM-05) */
+
+export type DevGoalStatus = Enums<"dev_goal_status">;
+export type DevelopmentGoal = Tables<"development_goals">;
+
 /* ------------------------------------------------------------------ views */
 
 /**
@@ -64,3 +69,5 @@ export type UtilizationRow = Views<"utilization_monthly">;
 export type BudgetSummaryRow = Views<"budget_summary">;
 export type ProjectHealthRow = Views<"project_health">;
 export type ProjectProgressRow = Views<"project_progress">;
+export type TalentPerformanceRow = Views<"talent_performance">;
+export type TalentDeliveryRow = Views<"talent_delivery">;

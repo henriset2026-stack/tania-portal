@@ -90,6 +90,16 @@ export const MODULES: readonly ModuleCard[] = [
     icon: "users",
   },
   {
+    href: "/talent/journey/",
+    title: "Talent Journey",
+    path: "tania/talent/journey",
+    description: "Raport performa dari data kerja Anda, kompetensi, peluang pengembangan, dan rencana karier.",
+    ids: "TM-05 · TM-06",
+    roles: ALL,
+    tone: "mint",
+    icon: "users",
+  },
+  {
     href: "/workload/",
     title: "Workload Analysis",
     path: "tania/workload",

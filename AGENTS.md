@@ -89,6 +89,14 @@ The whole architecture rests on one decision: **there is no application server, 
 
 ## Commands
 
+- Talent Journey (`/talent/journey`) implements TM-05 and TM-06, previously
+  deferred as Should. Its report is derived entirely from approved timesheets
+  and milestone ownership — **never add a manual performance score**; a number
+  nobody can trace to a source is the thing this page exists to avoid.
+- `development_goals` is personal data: owner, their manager, and leadership
+  only. A review can never be written by the goal owner — enforced by
+  `stamp_development_review()`, not by the UI.
+
 All five MVP phases are built. Every route in the page map exists.
 
 Talent detail is `/talent/?id=…`, not `/talent/[id]` — a dynamic segment needs

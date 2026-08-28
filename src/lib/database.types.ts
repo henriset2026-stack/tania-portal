@@ -318,6 +318,79 @@ export type Database = {
           },
         ]
       }
+      development_goals: {
+        Row: {
+          created_at: string
+          id: string
+          is_certification: boolean
+          notes: string | null
+          profile_id: string
+          review_note: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          skill_id: string | null
+          status: Database["public"]["Enums"]["dev_goal_status"]
+          target_date: string | null
+          target_level: number | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_certification?: boolean
+          notes?: string | null
+          profile_id: string
+          review_note?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          skill_id?: string | null
+          status?: Database["public"]["Enums"]["dev_goal_status"]
+          target_date?: string | null
+          target_level?: number | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_certification?: boolean
+          notes?: string | null
+          profile_id?: string
+          review_note?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          skill_id?: string | null
+          status?: Database["public"]["Enums"]["dev_goal_status"]
+          target_date?: string | null
+          target_level?: number | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "development_goals_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "development_goals_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "development_goals_skill_id_fkey"
+            columns: ["skill_id"]
+            isOneToOne: false
+            referencedRelation: "skills"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       feasibility_cases: {
         Row: {
           created_at: string
@@ -996,6 +1069,48 @@ export type Database = {
         }
         Relationships: []
       }
+      talent_delivery: {
+        Row: {
+          completed_on_time: number | null
+          milestones_completed: number | null
+          milestones_delayed: number | null
+          milestones_owned: number | null
+          on_time_rate: number | null
+          profile_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_milestones_pic_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      talent_performance: {
+        Row: {
+          approved_hours: number | null
+          billable_hours: number | null
+          delivery_hours: number | null
+          internal_hours: number | null
+          leave_hours: number | null
+          period_month: string | null
+          presales_hours: number | null
+          profile_id: string | null
+          projects_touched: number | null
+          rejected_rows: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "timesheets_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       utilization_monthly: {
         Row: {
           approved_hours: number | null
@@ -1033,6 +1148,7 @@ export type Database = {
         | "training"
       budget_entry_type: "commitment" | "realization"
       chat_role: "user" | "assistant"
+      dev_goal_status: "planned" | "in_progress" | "achieved" | "dropped"
       feasibility_decision: "go" | "no_go" | "hold"
       issue_severity: "low" | "medium" | "high" | "critical"
       issue_status:
@@ -1207,6 +1323,7 @@ export const Constants = {
       ],
       budget_entry_type: ["commitment", "realization"],
       chat_role: ["user", "assistant"],
+      dev_goal_status: ["planned", "in_progress", "achieved", "dropped"],
       feasibility_decision: ["go", "no_go", "hold"],
       issue_severity: ["low", "medium", "high", "critical"],
       issue_status: [

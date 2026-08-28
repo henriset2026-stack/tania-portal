@@ -82,3 +82,8 @@ insert into public.project_risks (project_id, description, probability, impact, 
 
 insert into public.project_issues (project_id, title, severity, status, opened_at) values
   ('00000000-0000-0000-0000-0000000000f1','Issue uji','critical','open', now() - interval '5 days');
+
+-- ---------- talent journey (migration 9) ----------
+insert into public.development_goals (id, profile_id, title, target_level, status) values
+  ('00000000-0000-0000-0000-0000000000e3', '00000000-0000-0000-0000-0000000000d1',
+   'Target uji', 4, 'planned');

@@ -28,6 +28,7 @@ export const NAV: readonly NavItem[] = [
   },
   { href: "/projects", label: "Projects", roles: ALL },
   { href: "/talent", label: "Talent", roles: ALL },
+  { href: "/talent/journey", label: "Journey", roles: ALL },
   {
     href: "/workload",
     label: "Workload",

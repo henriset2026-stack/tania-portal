@@ -164,6 +164,9 @@ const READ_MATRIX = {
   project_issues:      { allow: ["executive", "pm", "talent", "admin"], deny: [] },
   project_health:      { allow: ["executive", "chapter_lead", "pm", "admin"], deny: [] },
   project_progress:    { allow: ["executive", "chapter_lead", "pm", "admin"], deny: [] },
+  talent_performance:  { allow: ["executive", "chapter_lead", "admin"], deny: [] },
+  // A development plan is personal: owner, their manager, and leadership only.
+  development_goals:   { allow: ["chapter_lead", "admin", "manager"], deny: ["pm", "executive", "talent_other"] },
   chat_conversations:  { allow: ["talent"], deny: ["chapter_lead", "admin", "executive"] },
 };
 
@@ -386,6 +389,25 @@ function projectControlTests() {
   check("weighted progress reflects milestone weights", prog.includes("|"), `got ${prog}`);
 }
 
+function journeyTests() {
+  console.log("\n── talent journey (TM-05) ──");
+  const GOAL = "00000000-0000-0000-0000-0000000000e3";
+  expectWrite("owner adds their own goal", U.talent,
+    `insert into public.development_goals (profile_id, title) values ('${U.talent}','Target baru');`, true);
+  expectWrite("someone adds a goal for another person", U.talent,
+    `insert into public.development_goals (profile_id, title) values ('${U.talent_other}','Titipan');`, false);
+  expectWrite("owner writes their own review", U.talent,
+    `update public.development_goals set review_note='Saya nilai sendiri.' where id='${GOAL}';`, false);
+  expectWrite("their manager writes the review", U.manager,
+    `update public.development_goals set review_note='Sejalan dengan kebutuhan squad.' where id='${GOAL}';`, true);
+  const stamped = psql(
+    `select reviewed_by::text from public.development_goals where id='${GOAL}';`,
+    { tuples: true }).trim();
+  check("reviewed_by is the reviewer, not the owner", stamped === U.manager, `got ${stamped}`);
+  expectWrite("an unrelated talent reads someone's plan", U.talent_other,
+    `update public.development_goals set title='Diubah' where id='${GOAL}';`, false);
+}
+
 function auditTests() {
   console.log("\n── audit trail (SF-6) ──");
   const n = Number(psql(
@@ -408,6 +430,7 @@ try {
   profileTests();
   calculationTests();
   projectControlTests();
+  journeyTests();
   auditTests();
 } catch (e) {
   console.error("\nharness error:", String(e.stderr || e.message).slice(0, 600));
