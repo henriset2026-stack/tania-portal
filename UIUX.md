@@ -199,6 +199,14 @@ Kalimat penjelas di bawah tabel wajib ada: tanpa itu kolom Komitmen dan Sisa ham
 
 ### 5.6 Dashboard eksekutif
 
+**Ringkasan Eksekutif** berada paling atas: satu paragraf kondisi chapter, pergerakan terhadap periode sebelumnya, lalu daftar "Perlu tindakan" terurut dari yang paling berkonsekuensi.
+
+- Status **Kritis** bila ada issue kritikal melewati 3 hari, proyek critical, budget line di atas 100%, atau compliance di bawah 70%. **Perlu perhatian** bila ada overload, compliance di bawah 90%, proyek at risk, budget line di atas 80%, atau keputusan menunggu. Aturannya ditulis di layar, sehingga banner merah selalu dapat ditelusuri sebabnya.
+- Perbandingan periode memakai bulan dan minggu sebelumnya — keduanya query nyata, bukan ekstrapolasi. Bila periode pembanding tidak punya data, delta ditulis **&quot;—&quot;**, bukan 0%: *tidak berubah* dan *tidak diketahui* adalah dua klaim berbeda.
+- Ringkasan dihitung ulang setiap halaman dibuka dan mencantumkan waktu hitungnya.
+
+
+
 Empat kartu, masing-masing dapat diklik menuju modulnya: **Utilisasi chapter** (rata-rata + jumlah overload), **Compliance timesheet** (persen submit minggu berjalan + daftar yang belum), **Pipeline feasibility** (jumlah per keputusan + skor tertinggi menunggu), **Posisi anggaran** (serapan + jumlah line melewati ambang).
 
 Tidak ada kartu tanpa tautan. Angka buntu memicu pertanyaan "dari mana ini?" yang berujung kembali ke spreadsheet.

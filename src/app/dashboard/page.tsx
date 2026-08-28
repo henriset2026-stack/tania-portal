@@ -12,7 +12,8 @@ import { useSession } from "@/components/session-provider";
 import { useQuery } from "@/lib/use-query";
 import { getSupabase } from "@/lib/supabase";
 import { hours as fmtHours, money, percent } from "@/lib/format";
-import { capacityHours } from "@/lib/capacity";
+import { capacityHours, recentMonths } from "@/lib/capacity";
+import { ExecutiveSummary } from "@/components/executive-summary";
 import { addDays, monthKey, startOfWeek, toKey } from "@/lib/week";
 
 /*
@@ -34,6 +35,7 @@ interface AllocRow { profile_id: string; percent: number }
 interface WeekRow { profile_id: string }
 interface CaseRow { id: string; title: string; total_score: number; decision: string | null }
 interface BudgetRow { plan_amount: number; committed_amount: number; realized_amount: number; remaining_amount: number; program: string; category: string }
+interface HealthRow { overall_health: string | null; contract_value: number | null; aged_critical: number | null }
 
 export default function DashboardPage() {
   const { profile } = useSession();
@@ -75,6 +77,36 @@ export default function DashboardPage() {
         .range(0, 1999).returns<WeekRow[]>(),
     [from, to],
   );
+  // Comparison periods. The summary shows movement, so it needs the month
+  // and the week before this one — both real queries, not extrapolation.
+  const prevMonth = recentMonths(month, 2)[0];
+  const prevWeekStart = startOfWeek(addDays(weekStart, -7));
+  const prevFrom = toKey(prevWeekStart);
+  const prevTo = toKey(addDays(prevWeekStart, 6));
+
+  const utilPrev = useQuery<UtilRow>(
+    () =>
+      getSupabase().from("utilization_monthly")
+        .select("profile_id, approved_hours, utilization_pct")
+        .eq("period_month", prevMonth).range(0, 499).returns<UtilRow[]>(),
+    [prevMonth],
+  );
+  const weekPrev = useQuery<WeekRow>(
+    () =>
+      getSupabase().from("timesheets").select("profile_id")
+        .in("status", ["submitted", "approved"])
+        .gte("work_date", prevFrom).lte("work_date", prevTo)
+        .range(0, 1999).returns<WeekRow[]>(),
+    [prevFrom, prevTo],
+  );
+  const health = useQuery<HealthRow>(
+    () =>
+      getSupabase().from("project_health")
+        .select("overall_health, contract_value, aged_critical")
+        .range(0, 199).returns<HealthRow[]>(),
+    [],
+  );
+
   const cases = useQuery<CaseRow>(
     () =>
       getSupabase().from("feasibility_cases").select("id, title, total_score, decision")
@@ -127,6 +159,29 @@ export default function DashboardPage() {
     hold: cases.rows.filter((c) => c.decision === "hold").length,
     no_go: cases.rows.filter((c) => c.decision === "no_go").length,
   };
+
+  // Previous-period figures use the same roster denominator (SF-1.5b).
+  const utilPrevBy = new Map(utilPrev.rows.map((u) => [u.profile_id, u]));
+  const prevCap = capacityHours(prevMonth);
+  const prevHours = roster.reduce(
+    (s, p) => s + Number(utilPrevBy.get(p.id)?.approved_hours ?? 0), 0);
+  const utilPrevPct =
+    utilPrev.rows.length === 0 || roster.length === 0
+      ? null
+      : (prevHours / (roster.length * prevCap)) * 100;
+
+  const prevSubmitted = new Set(weekPrev.rows.map((r) => r.profile_id));
+  const compliancePrevPct =
+    weekPrev.rows.length === 0 || roster.length === 0
+      ? null
+      : (roster.filter((p) => prevSubmitted.has(p.id)).length / roster.length) * 100;
+
+  const projectsRed = health.rows.filter((r) => r.overall_health === "red").length;
+  const projectsAmber = health.rows.filter((r) => r.overall_health === "amber").length;
+  const revenueAtRisk = health.rows
+    .filter((r) => r.overall_health === "red")
+    .reduce((s, r) => s + Number(r.contract_value ?? 0), 0);
+  const agedCritical = health.rows.reduce((s, r) => s + Number(r.aged_critical ?? 0), 0);
 
   const bTotals = budget.rows.reduce(
     (t, r) => ({
@@ -205,6 +260,32 @@ export default function DashboardPage() {
           </p>
         </Card>
       ) : null}
+
+      <ExecutiveSummary
+        loading={people.loading || util.loading || budget.loading || health.loading}
+        utilPct={chapterPct}
+        utilPrevPct={utilPrevPct}
+        overloaded={overloaded.length}
+        headcount={roster.length}
+        compliancePct={compliancePct}
+        compliancePrevPct={compliancePrevPct}
+        missingCount={missing.length}
+        projectsRed={projectsRed}
+        projectsAmber={projectsAmber}
+        projectsTotal={health.rows.length}
+        revenueAtRisk={revenueAtRisk}
+        agedCriticalIssues={agedCritical}
+        pendingDecisions={pending.length}
+        topPendingScore={pending.length ? Number(pending[0].total_score) : null}
+        budgetAbsorbedPct={absorbed}
+        budgetLinesOver={overLines}
+        budgetLinesWarn={
+          budget.rows.filter((r) => {
+            const pct = Number(r.plan_amount) ? (Number(r.realized_amount) / Number(r.plan_amount)) * 100 : 0;
+            return pct >= WARN_AT && pct < OVER_AT;
+          }).length
+        }
+      />
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
         <CardLink href="/workload/" label="Utilisasi chapter">
