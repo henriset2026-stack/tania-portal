@@ -114,17 +114,37 @@ export function Copilot() {
       );
 
       if (!res.ok) {
-        // 404 means the function was never deployed; 500 usually means the
-        // Anthropic key is missing. Say which, rather than "terjadi kesalahan".
-        const detail =
+        // Say what actually went wrong. The function returns a `detail` field
+        // carrying the upstream message, and guessing a cause is how a widget
+        // ends up blaming a missing key when the real problem is billing.
+        let upstream = "";
+        try {
+          const body = (await res.json()) as { detail?: string };
+          upstream = body.detail ?? "";
+        } catch {
+          /* non-JSON body */
+        }
+        const known =
           res.status === 404
             ? "Edge function tania-assistant belum di-deploy."
             : res.status === 403
               ? "Origin ini belum masuk daftar ALLOWED_ORIGINS."
               : res.status === 401
                 ? "Sesi tidak valid. Masuk ulang."
-                : "Layanan asisten belum aktif — ANTHROPIC_API_KEY belum disetel pada project.";
-        throw new Error(detail);
+                : null;
+
+        if (known) throw new Error(known);
+        if (/credit balance/i.test(upstream))
+          throw new Error(
+            "Saldo kredit Anthropic habis. Isi kredit di console.anthropic.com → Plans & Billing.",
+          );
+        if (/invalid x-api-key|authentication_error/i.test(upstream))
+          throw new Error("ANTHROPIC_API_KEY tidak valid atau belum disetel pada project.");
+        if (/rate_limit/i.test(upstream))
+          throw new Error("Terkena rate limit Anthropic. Coba lagi sebentar lagi.");
+        throw new Error(
+          upstream ? `Layanan asisten gagal: ${upstream.slice(0, 180)}` : "Layanan asisten gagal.",
+        );
       }
 
       const body = (await res.json()) as { conversation_id: string; reply: string };
