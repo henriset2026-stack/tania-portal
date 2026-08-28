@@ -164,6 +164,7 @@ Edge function `supabase/functions/tania-assistant/` + tables `chat_conversations
 - Token usage is recorded per message (AV-06) for cost monitoring.
 - Browser access is limited to the `ALLOWED_ORIGINS` secret (exact-match origins). Unset = `http://localhost:3000` only, so an unconfigured deploy fails closed. Production holds **exactly one origin — the Netlify domain**; do not add others "just in case":
   `supabase secrets set ALLOWED_ORIGINS="https://tania-portal.vercel.app" && supabase functions deploy tania-assistant`
+  Both are **already done** on project `tmzwlurjwantvuptpvpe`: the function is deployed and the allowlist holds `https://tania-portal.vercel.app,http://localhost:3000`. Verified in production — the allowed origin is echoed, a foreign origin gets 403.
   Re-run both whenever the site URL changes, or the widget breaks with a CORS error.
 - This is the only paid component. `ANTHROPIC_API_KEY` is **not set**, so the widget renders and fails with a plain message rather than answering. Do not set the key without an approved monthly spend cap (BRD D2).
 - The widget is `src/components/copilot.tsx`, mounted in the root layout so it appears on every signed-in page and renders nothing when signed out.
