@@ -65,13 +65,14 @@ export function AppShell({ title, actions, children }: {
   return (
     <div className="flex min-h-screen">
       <aside className="flex w-[220px] shrink-0 flex-col bg-[#0f172a] py-4 text-slate-300">
-        <div className="flex items-center gap-2.5 px-[18px] pb-[18px] pt-1">
+        {/* Back to the launcher home. */}
+        <Link href="/" className="flex items-center gap-2.5 px-[18px] pb-[18px] pt-1">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <rect x="2" y="2" width="20" height="20" rx="5" fill="#e4002b" />
             <path d="M7 8.5h10M12 8.5V16" stroke="#fff" strokeWidth="1.9" strokeLinecap="round" />
           </svg>
           <b className="text-[16px] tracking-wide text-white">TANIA</b>
-        </div>
+        </Link>
         <nav className="flex flex-col gap-0.5 px-2.5">
           {items.map((item) => {
             const active = pathname === item.href || pathname === `${item.href}/`;
