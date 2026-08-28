@@ -87,6 +87,20 @@ export type Database = {
             foreignKeyName: "allocations_project_id_fkey"
             columns: ["project_id"]
             isOneToOne: false
+            referencedRelation: "project_health"
+            referencedColumns: ["project_id"]
+          },
+          {
+            foreignKeyName: "allocations_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "project_progress"
+            referencedColumns: ["project_id"]
+          },
+          {
+            foreignKeyName: "allocations_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
             referencedRelation: "projects"
             referencedColumns: ["id"]
           },
@@ -389,6 +403,20 @@ export type Database = {
             foreignKeyName: "feasibility_cases_project_id_fkey"
             columns: ["project_id"]
             isOneToOne: false
+            referencedRelation: "project_health"
+            referencedColumns: ["project_id"]
+          },
+          {
+            foreignKeyName: "feasibility_cases_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "project_progress"
+            referencedColumns: ["project_id"]
+          },
+          {
+            foreignKeyName: "feasibility_cases_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
             referencedRelation: "projects"
             referencedColumns: ["id"]
           },
@@ -490,12 +518,262 @@ export type Database = {
           },
         ]
       }
+      project_issues: {
+        Row: {
+          action_plan: string | null
+          created_at: string
+          description: string | null
+          due_date: string | null
+          id: string
+          opened_at: string
+          owner_id: string | null
+          project_id: string
+          resolution: string | null
+          resolved_at: string | null
+          root_cause: string | null
+          severity: Database["public"]["Enums"]["issue_severity"]
+          status: Database["public"]["Enums"]["issue_status"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          action_plan?: string | null
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          opened_at?: string
+          owner_id?: string | null
+          project_id: string
+          resolution?: string | null
+          resolved_at?: string | null
+          root_cause?: string | null
+          severity?: Database["public"]["Enums"]["issue_severity"]
+          status?: Database["public"]["Enums"]["issue_status"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          action_plan?: string | null
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          opened_at?: string
+          owner_id?: string | null
+          project_id?: string
+          resolution?: string | null
+          resolved_at?: string | null
+          root_cause?: string | null
+          severity?: Database["public"]["Enums"]["issue_severity"]
+          status?: Database["public"]["Enums"]["issue_status"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_issues_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_issues_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "project_health"
+            referencedColumns: ["project_id"]
+          },
+          {
+            foreignKeyName: "project_issues_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "project_progress"
+            referencedColumns: ["project_id"]
+          },
+          {
+            foreignKeyName: "project_issues_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_milestones: {
+        Row: {
+          actual_finish: string | null
+          actual_start: string | null
+          created_at: string
+          evidence_url: string | null
+          id: string
+          name: string
+          notes: string | null
+          pic_id: string | null
+          planned_finish: string
+          planned_start: string
+          progress_pct: number
+          project_id: string
+          status: Database["public"]["Enums"]["milestone_status"]
+          updated_at: string
+          weight: number
+        }
+        Insert: {
+          actual_finish?: string | null
+          actual_start?: string | null
+          created_at?: string
+          evidence_url?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          pic_id?: string | null
+          planned_finish: string
+          planned_start: string
+          progress_pct?: number
+          project_id: string
+          status?: Database["public"]["Enums"]["milestone_status"]
+          updated_at?: string
+          weight: number
+        }
+        Update: {
+          actual_finish?: string | null
+          actual_start?: string | null
+          created_at?: string
+          evidence_url?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          pic_id?: string | null
+          planned_finish?: string
+          planned_start?: string
+          progress_pct?: number
+          project_id?: string
+          status?: Database["public"]["Enums"]["milestone_status"]
+          updated_at?: string
+          weight?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_milestones_pic_id_fkey"
+            columns: ["pic_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_milestones_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "project_health"
+            referencedColumns: ["project_id"]
+          },
+          {
+            foreignKeyName: "project_milestones_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "project_progress"
+            referencedColumns: ["project_id"]
+          },
+          {
+            foreignKeyName: "project_milestones_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_risks: {
+        Row: {
+          category: string | null
+          contingency: string | null
+          created_at: string
+          description: string
+          id: string
+          impact: Database["public"]["Enums"]["risk_level"]
+          mitigation: string | null
+          owner_id: string | null
+          probability: Database["public"]["Enums"]["risk_level"]
+          project_id: string
+          risk_score: number | null
+          status: Database["public"]["Enums"]["risk_status"]
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          contingency?: string | null
+          created_at?: string
+          description: string
+          id?: string
+          impact: Database["public"]["Enums"]["risk_level"]
+          mitigation?: string | null
+          owner_id?: string | null
+          probability: Database["public"]["Enums"]["risk_level"]
+          project_id: string
+          risk_score?: number | null
+          status?: Database["public"]["Enums"]["risk_status"]
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          contingency?: string | null
+          created_at?: string
+          description?: string
+          id?: string
+          impact?: Database["public"]["Enums"]["risk_level"]
+          mitigation?: string | null
+          owner_id?: string | null
+          probability?: Database["public"]["Enums"]["risk_level"]
+          project_id?: string
+          risk_score?: number | null
+          status?: Database["public"]["Enums"]["risk_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_risks_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_risks_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "project_health"
+            referencedColumns: ["project_id"]
+          },
+          {
+            foreignKeyName: "project_risks_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "project_progress"
+            referencedColumns: ["project_id"]
+          },
+          {
+            foreignKeyName: "project_risks_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       projects: {
         Row: {
           code: string
+          contract_value: number | null
           created_at: string
           customer: string | null
           end_date: string | null
+          health_budget: Database["public"]["Enums"]["rag"]
+          health_budget_note: string | null
+          health_customer: Database["public"]["Enums"]["rag"]
+          health_customer_note: string | null
+          health_scope: Database["public"]["Enums"]["rag"]
+          health_scope_note: string | null
           id: string
           name: string
           pm_id: string | null
@@ -505,9 +783,16 @@ export type Database = {
         }
         Insert: {
           code: string
+          contract_value?: number | null
           created_at?: string
           customer?: string | null
           end_date?: string | null
+          health_budget?: Database["public"]["Enums"]["rag"]
+          health_budget_note?: string | null
+          health_customer?: Database["public"]["Enums"]["rag"]
+          health_customer_note?: string | null
+          health_scope?: Database["public"]["Enums"]["rag"]
+          health_scope_note?: string | null
           id?: string
           name: string
           pm_id?: string | null
@@ -517,9 +802,16 @@ export type Database = {
         }
         Update: {
           code?: string
+          contract_value?: number | null
           created_at?: string
           customer?: string | null
           end_date?: string | null
+          health_budget?: Database["public"]["Enums"]["rag"]
+          health_budget_note?: string | null
+          health_customer?: Database["public"]["Enums"]["rag"]
+          health_customer_note?: string | null
+          health_scope?: Database["public"]["Enums"]["rag"]
+          health_scope_note?: string | null
           id?: string
           name?: string
           pm_id?: string | null
@@ -630,6 +922,20 @@ export type Database = {
             foreignKeyName: "timesheets_project_id_fkey"
             columns: ["project_id"]
             isOneToOne: false
+            referencedRelation: "project_health"
+            referencedColumns: ["project_id"]
+          },
+          {
+            foreignKeyName: "timesheets_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "project_progress"
+            referencedColumns: ["project_id"]
+          },
+          {
+            foreignKeyName: "timesheets_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
             referencedRelation: "projects"
             referencedColumns: ["id"]
           },
@@ -648,6 +954,45 @@ export type Database = {
           program: string | null
           realized_amount: number | null
           remaining_amount: number | null
+        }
+        Relationships: []
+      }
+      project_health: {
+        Row: {
+          actual_progress: number | null
+          aged_critical: number | null
+          ambers: number | null
+          code: string | null
+          contract_value: number | null
+          customer: string | null
+          health_budget: Database["public"]["Enums"]["rag"] | null
+          health_customer: Database["public"]["Enums"]["rag"] | null
+          health_risk: Database["public"]["Enums"]["rag"] | null
+          health_schedule: Database["public"]["Enums"]["rag"] | null
+          health_scope: Database["public"]["Enums"]["rag"] | null
+          milestone_count: number | null
+          name: string | null
+          open_critical: number | null
+          open_issues: number | null
+          overall_health: Database["public"]["Enums"]["rag"] | null
+          planned_progress: number | null
+          project_id: string | null
+          reds: number | null
+          schedule_variance: number | null
+          status: Database["public"]["Enums"]["project_status"] | null
+          top_open_risk: number | null
+          total_weight: number | null
+        }
+        Relationships: []
+      }
+      project_progress: {
+        Row: {
+          actual_progress: number | null
+          milestone_count: number | null
+          planned_progress: number | null
+          project_id: string | null
+          schedule_variance: number | null
+          total_weight: number | null
         }
         Relationships: []
       }
@@ -689,12 +1034,35 @@ export type Database = {
       budget_entry_type: "commitment" | "realization"
       chat_role: "user" | "assistant"
       feasibility_decision: "go" | "no_go" | "hold"
+      issue_severity: "low" | "medium" | "high" | "critical"
+      issue_status:
+        | "open"
+        | "assigned"
+        | "in_progress"
+        | "blocked"
+        | "resolved"
+        | "closed"
+      milestone_status:
+        | "not_started"
+        | "in_progress"
+        | "completed"
+        | "delayed"
+        | "blocked"
+        | "cancelled"
       project_status:
         | "candidate"
         | "active"
         | "on_hold"
         | "completed"
         | "cancelled"
+      rag: "green" | "amber" | "red"
+      risk_level: "low" | "medium" | "high"
+      risk_status:
+        | "identified"
+        | "assessed"
+        | "mitigating"
+        | "closed"
+        | "materialized"
       timesheet_status: "draft" | "submitted" | "approved" | "rejected"
       user_role:
         | "executive"
@@ -840,12 +1208,38 @@ export const Constants = {
       budget_entry_type: ["commitment", "realization"],
       chat_role: ["user", "assistant"],
       feasibility_decision: ["go", "no_go", "hold"],
+      issue_severity: ["low", "medium", "high", "critical"],
+      issue_status: [
+        "open",
+        "assigned",
+        "in_progress",
+        "blocked",
+        "resolved",
+        "closed",
+      ],
+      milestone_status: [
+        "not_started",
+        "in_progress",
+        "completed",
+        "delayed",
+        "blocked",
+        "cancelled",
+      ],
       project_status: [
         "candidate",
         "active",
         "on_hold",
         "completed",
         "cancelled",
+      ],
+      rag: ["green", "amber", "red"],
+      risk_level: ["low", "medium", "high"],
+      risk_status: [
+        "identified",
+        "assessed",
+        "mitigating",
+        "closed",
+        "materialized",
       ],
       timesheet_status: ["draft", "submitted", "approved", "rejected"],
       user_role: [

@@ -26,6 +26,7 @@ export const NAV: readonly NavItem[] = [
     label: "Approval",
     roles: ["chapter_lead", "manager", "admin"],
   },
+  { href: "/projects", label: "Projects", roles: ALL },
   { href: "/talent", label: "Talent", roles: ALL },
   {
     href: "/workload",

@@ -71,3 +71,14 @@ select '00000000-0000-0000-0000-0000000000d1', '00000000-0000-0000-0000-00000000
        (select id from public.activities where code='PRE'), d::date, 6, 'approved'
 from generate_series('2026-08-01'::date, '2026-08-31'::date, '1 day') d
 where extract(isodow from d) < 6;
+
+-- ---------- project control (migration 8) ----------
+insert into public.project_milestones (project_id, name, weight, planned_start, planned_finish, progress_pct, status, evidence_url) values
+  ('00000000-0000-0000-0000-0000000000f1','Fase satu', 60,'2026-06-01','2026-07-31',100,'completed','https://example.invalid/evidence'),
+  ('00000000-0000-0000-0000-0000000000f1','Fase dua',  40,'2026-09-01','2026-11-30',  0,'not_started',null);
+
+insert into public.project_risks (project_id, description, probability, impact, status) values
+  ('00000000-0000-0000-0000-0000000000f1','Risiko uji', 'high','high','mitigating');
+
+insert into public.project_issues (project_id, title, severity, status, opened_at) values
+  ('00000000-0000-0000-0000-0000000000f1','Issue uji','critical','open', now() - interval '5 days');

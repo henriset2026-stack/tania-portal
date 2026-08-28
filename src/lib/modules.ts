@@ -70,6 +70,16 @@ export const MODULES: readonly ModuleCard[] = [
     icon: "check",
   },
   {
+    href: "/projects/",
+    title: "Project Control",
+    path: "tania/projects",
+    description: "Progress vs rencana, schedule variance, risk register, dan kesehatan proyek per dimensi.",
+    ids: "M3 · M4 · M6 · M7",
+    roles: ALL,
+    tone: "teal",
+    icon: "cube",
+  },
+  {
     href: "/talent/",
     title: "Talent Management",
     path: "tania/talent",
@@ -97,7 +107,7 @@ export const MODULES: readonly ModuleCard[] = [
     ids: "PF-01 · PF-04",
     roles: ALL,
     tone: "indigo",
-    icon: "cube",
+    icon: "grid",
   },
   {
     href: "/budget/",

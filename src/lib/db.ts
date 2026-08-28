@@ -38,6 +38,19 @@ export type BudgetLine = Tables<"budget_lines">;
 export type BudgetEntry = Tables<"budget_entries">;
 export type AuditLogRow = Tables<"audit_log">;
 
+/* ------------------------------------------------- project control (M8) */
+
+export type Rag = Enums<"rag">;
+export type MilestoneStatus = Enums<"milestone_status">;
+export type RiskLevel = Enums<"risk_level">;
+export type RiskStatus = Enums<"risk_status">;
+export type IssueSeverity = Enums<"issue_severity">;
+export type IssueStatus = Enums<"issue_status">;
+
+export type Milestone = Tables<"project_milestones">;
+export type ProjectRisk = Tables<"project_risks">;
+export type ProjectIssue = Tables<"project_issues">;
+
 /* ------------------------------------------------------------------ views */
 
 /**
@@ -49,3 +62,5 @@ export type AuditLogRow = Tables<"audit_log">;
  */
 export type UtilizationRow = Views<"utilization_monthly">;
 export type BudgetSummaryRow = Views<"budget_summary">;
+export type ProjectHealthRow = Views<"project_health">;
+export type ProjectProgressRow = Views<"project_progress">;

@@ -159,6 +159,11 @@ const READ_MATRIX = {
   budget_summary:      { allow: ["executive", "chapter_lead", "manager", "pm", "admin"], deny: ["talent"] },
   audit_log:           { allow: ["chapter_lead", "admin"], deny: ["executive", "manager", "pm", "talent"] },
   utilization_monthly: { allow: ["executive", "chapter_lead", "admin"], deny: [] },
+  project_milestones:  { allow: ["executive", "pm", "talent", "admin"], deny: [] },
+  project_risks:       { allow: ["executive", "pm", "talent", "admin"], deny: [] },
+  project_issues:      { allow: ["executive", "pm", "talent", "admin"], deny: [] },
+  project_health:      { allow: ["executive", "chapter_lead", "pm", "admin"], deny: [] },
+  project_progress:    { allow: ["executive", "chapter_lead", "pm", "admin"], deny: [] },
   chat_conversations:  { allow: ["talent"], deny: ["chapter_lead", "admin", "executive"] },
 };
 
@@ -344,6 +349,43 @@ function calculationTests() {
   );
 }
 
+function projectControlTests() {
+  console.log("\n── project control (M3, M4, M6, M7) ──");
+  const P = PROJECT;
+  expectWrite("pm adds a milestone", U.pm,
+    `insert into public.project_milestones (project_id,name,weight,planned_start,planned_finish)
+     values ('${P}','Baru',10,'2026-10-01','2026-10-31');`, true);
+  expectWrite("talent adds a milestone", U.talent,
+    `insert into public.project_milestones (project_id,name,weight,planned_start,planned_finish)
+     values ('${P}','Curang',10,'2026-10-01','2026-10-31');`, false);
+  expectWrite("milestone at 100% without evidence", U.pm,
+    `update public.project_milestones set progress_pct=100
+     where project_id='${P}' and name='Baru';`, false);
+  expectWrite("milestone at 100% with evidence", U.pm,
+    `update public.project_milestones set progress_pct=100, evidence_url='https://example.invalid/x'
+     where project_id='${P}' and name='Baru';`, true);
+  expectWrite("closing an issue without a resolution", U.pm,
+    `update public.project_issues set status='resolved' where project_id='${P}';`, false);
+  expectWrite("closing an issue with a resolution", U.pm,
+    `update public.project_issues set status='resolved', resolution='Sudah ditangani.'
+     where project_id='${P}';`, true);
+  expectWrite("non-green Budget health without a reason", U.chapter_lead,
+    `update public.projects set health_budget='red' where id='${P}';`, false);
+  expectWrite("non-green Budget health with a reason", U.chapter_lead,
+    `update public.projects set health_budget='red', health_budget_note='Biaya melampaui rencana.'
+     where id='${P}';`, true);
+
+  const risk = psql(
+    `select risk_score::text from public.project_risks where project_id='${P}' limit 1;`,
+    { tuples: true }).trim();
+  check("risk score high x high = 9", risk === "9", `got ${risk}`);
+
+  const prog = psql(
+    `select actual_progress::text || '|' || planned_progress::text
+     from public.project_progress where project_id='${P}';`, { tuples: true }).trim();
+  check("weighted progress reflects milestone weights", prog.includes("|"), `got ${prog}`);
+}
+
 function auditTests() {
   console.log("\n── audit trail (SF-6) ──");
   const n = Number(psql(
@@ -365,6 +407,7 @@ try {
   budgetTests();
   profileTests();
   calculationTests();
+  projectControlTests();
   auditTests();
 } catch (e) {
   console.error("\nharness error:", String(e.stderr || e.message).slice(0, 600));

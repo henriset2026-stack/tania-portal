@@ -1,7 +1,7 @@
 # TANIA — Portal Digital Product & Solution
 
 Internal portal for Chapter Product & Solution (DPS), Digital Product, Telkom Indonesia.
-Five modules: **Talent Management (TM)**, **Workload Analysis (WA)**, **Project Timesheet (TS)**, **Project Feasibility (PF)**, **Budget Control (BC)**, plus cross-module work (XM). A sixth module — Avatar AI (AV) — is built but **not approved for production**; see §Avatar.
+Five modules from Requirement Document v1.0: **Talent Management (TM)**, **Workload Analysis (WA)**, **Project Timesheet (TS)**, **Project Feasibility (PF)**, **Budget Control (BC)**, plus cross-module work (XM). A sixth area, **Project Control**, was added later to close the delivery-control gap against the DPS Project & Portfolio Control Tower — milestones, schedule variance, risk and issue registers, and six-dimension project health. Its formulas mirror `DPS-Project-Control-CRM/docs/01-prd.md` §7.2–§7.7 so both products report the same numbers. A sixth module — Avatar AI (AV) — is built but **not approved for production**; see §Avatar.
 
 **Read before changing anything:** `BRD.md` (why it is worth doing) · `PRD.md` (what and why) · `SAD.md` (how it is built) · `SRS.md` (formal, testable behaviour — the SF-x rules and acceptance criteria) · `TRD.md` (data dictionary, config inventory, query and endpoint contracts) · `DDD.md` (database design, ON DELETE policy, RLS patterns, known gaps) · `UIUX.md` (page map, screen specs, required states, formats) · `supabase/migrations/` (the actual truth).
 Requirement IDs like TM-01, WA-02, TS-02, PF-04, BC-05 refer to `docs/TANIA_Requirement_Document_v1.0.pdf`.
@@ -43,6 +43,9 @@ The whole architecture rests on one decision: **there is no application server, 
 | `handle_new_user()` | A `profiles` row exists for every `auth.users` row |
 | `guard_profile_privileges()` | Non-admins cannot change `role`, `is_active`, or `manager_id` — including on their own row |
 | `stamp_timesheet_transitions()` | `submitted_at` / `approved_by` are server-set on status change |
+| `guard_project_health_notes()` | A non-green Budget/Scope/Customer dimension must carry a reason, or health scores quietly stop meaning anything |
+| `guard_milestone_completion()` | 100% requires evidence; stamps `actual_finish`; marks an overdue unfinished milestone `delayed` |
+| `stamp_issue_resolution()` | Stamps `resolved_at`, and refuses to close an issue with no resolution text |
 | `enforce_timesheet_transition()` | The TS-02 state machine. **Do not try to express transition rules as a second UPDATE policy** — Postgres ORs every USING against the old row and every WITH CHECK against the new row separately, so two policies can permit a transition neither allows alone |
 | `stamp_feasibility_decision()` | `decided_by` / `decided_at` are server-set, and a decision **without** `decision_rationale` is rejected |
 | `audit_trigger()` | Append-only audit rows on `profiles`, `timesheets`, `feasibility_cases`, `budget_lines`, `budget_entries` |
