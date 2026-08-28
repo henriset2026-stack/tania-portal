@@ -89,6 +89,15 @@ The whole architecture rests on one decision: **there is no application server, 
 
 ## Commands
 
+- Effort-to-cost (TS-05) lives in `cost_rates` plus the `project_effort_cost`
+  and `project_talent_contribution` views. **Rates are per role and grade,
+  never per person** — a per-person rate column would make this salary data,
+  which PRD non-goal N1 keeps out of TANIA. The cost is shown beside budget
+  lines, never subtracted from them: those lines are external spend, so
+  treating labour as a drawdown double-counts.
+- Both views are `security_invoker`, and that is load-bearing: a talent who
+  cannot read `cost_rates` gets NULL cost on their own hours instead of a
+  figure. Removing it would leak the rate card to everyone.
 - Talent Journey (`/talent/journey`) implements TM-05 and TM-06, previously
   deferred as Should. Its report is derived entirely from approved timesheets
   and milestone ownership — **never add a manual performance score**; a number

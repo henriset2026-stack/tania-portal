@@ -87,3 +87,8 @@ insert into public.project_issues (project_id, title, severity, status, opened_a
 insert into public.development_goals (id, profile_id, title, target_level, status) values
   ('00000000-0000-0000-0000-0000000000e3', '00000000-0000-0000-0000-0000000000d1',
    'Target uji', 4, 'planned');
+
+-- ---------- effort-to-cost (migration 10) ----------
+insert into public.cost_rates (fiscal_year, role, grade, hourly_rate) values
+  (2026, 'talent', '', 200000),
+  (2026, 'pm',     '', 300000);

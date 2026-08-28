@@ -165,6 +165,7 @@ const READ_MATRIX = {
   project_health:      { allow: ["executive", "chapter_lead", "pm", "admin"], deny: [] },
   project_progress:    { allow: ["executive", "chapter_lead", "pm", "admin"], deny: [] },
   talent_performance:  { allow: ["executive", "chapter_lead", "admin"], deny: [] },
+  cost_rates:          { allow: ["executive", "chapter_lead", "manager", "pm", "admin"], deny: ["talent"] },
   // A development plan is personal: owner, their manager, and leadership only.
   development_goals:   { allow: ["chapter_lead", "admin", "manager"], deny: ["pm", "executive", "talent_other"] },
   chat_conversations:  { allow: ["talent"], deny: ["chapter_lead", "admin", "executive"] },
@@ -408,6 +409,44 @@ function journeyTests() {
     `update public.development_goals set title='Diubah' where id='${GOAL}';`, false);
 }
 
+function effortCostTests() {
+  console.log("\n── effort to cost (TS-05) ──");
+  expectWrite("lead sets a rate", U.chapter_lead,
+    `insert into public.cost_rates (fiscal_year, role, grade, hourly_rate)
+     values (2027,'talent','',210000);`, true);
+  expectWrite("pm sets a rate", U.pm,
+    `insert into public.cost_rates (fiscal_year, role, grade, hourly_rate)
+     values (2027,'manager','',1);`, false);
+  expectWrite("duplicate rate for the same year/role/grade", U.chapter_lead,
+    `insert into public.cost_rates (fiscal_year, role, grade, hourly_rate)
+     values (2027,'talent','',999);`, false);
+
+  // The property that matters: the views are security_invoker, so a talent
+  // who cannot read the rate card gets NULL cost on their own hours rather
+  // than a figure. Without security_invoker this would leak the rate card
+  // to everyone.
+  const asTalent = psql(
+    `begin; set local role authenticated;
+     set local request.jwt.claim.sub = '${U.talent}';
+     select coalesce(max(hourly_rate)::text,'NULL') || '|' ||
+            coalesce(max(indicative_cost)::text,'NULL') || '|' ||
+            coalesce(max(approved_hours)::text,'NULL')
+     from public.project_talent_contribution;
+     rollback;`, { tuples: true })
+    .trim().split("\n").filter((l) => l.includes("|")).pop() ?? "";
+  check("talent sees own hours but no rate and no cost",
+    asTalent.startsWith("NULL|NULL|") && !asTalent.endsWith("|NULL"), `got ${asTalent}`);
+
+  const asLead = psql(
+    `begin; set local role authenticated;
+     set local request.jwt.claim.sub = '${U.chapter_lead}';
+     select coalesce(max(hourly_rate)::text,'NULL')
+     from public.project_talent_contribution;
+     rollback;`, { tuples: true })
+    .trim().split("\n").filter((l) => /\d|NULL/.test(l)).pop() ?? "";
+  check("lead does see the rate", asLead !== "NULL" && asLead !== "", `got ${asLead}`);
+}
+
 function auditTests() {
   console.log("\n── audit trail (SF-6) ──");
   const n = Number(psql(
@@ -431,6 +470,7 @@ try {
   calculationTests();
   projectControlTests();
   journeyTests();
+  effortCostTests();
   auditTests();
 } catch (e) {
   console.error("\nharness error:", String(e.stderr || e.message).slice(0, 600));
