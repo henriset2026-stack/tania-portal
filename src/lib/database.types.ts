@@ -106,6 +106,62 @@ export type Database = {
           },
         ]
       }
+      announcements: {
+        Row: {
+          body: string
+          created_at: string
+          created_by: string | null
+          ends_at: string | null
+          id: string
+          is_active: boolean
+          link_label: string | null
+          link_url: string | null
+          priority: number
+          starts_at: string
+          title: string
+          tone: Database["public"]["Enums"]["announcement_tone"]
+          updated_at: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          created_by?: string | null
+          ends_at?: string | null
+          id?: string
+          is_active?: boolean
+          link_label?: string | null
+          link_url?: string | null
+          priority?: number
+          starts_at?: string
+          title: string
+          tone?: Database["public"]["Enums"]["announcement_tone"]
+          updated_at?: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          created_by?: string | null
+          ends_at?: string | null
+          id?: string
+          is_active?: boolean
+          link_label?: string | null
+          link_url?: string | null
+          priority?: number
+          starts_at?: string
+          title?: string
+          tone?: Database["public"]["Enums"]["announcement_tone"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "announcements_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_log: {
         Row: {
           action: string
@@ -317,6 +373,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      cost_rates: {
+        Row: {
+          created_at: string
+          fiscal_year: number
+          grade: string
+          hourly_rate: number
+          id: string
+          note: string | null
+          role: Database["public"]["Enums"]["user_role"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          fiscal_year: number
+          grade?: string
+          hourly_rate: number
+          id?: string
+          note?: string | null
+          role: Database["public"]["Enums"]["user_role"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          fiscal_year?: number
+          grade?: string
+          hourly_rate?: number
+          id?: string
+          note?: string | null
+          role?: Database["public"]["Enums"]["user_role"]
+          updated_at?: string
+        }
+        Relationships: []
       }
       development_goals: {
         Row: {
@@ -1016,6 +1105,42 @@ export type Database = {
       }
     }
     Views: {
+      announcements_active: {
+        Row: {
+          body: string | null
+          ends_at: string | null
+          id: string | null
+          link_label: string | null
+          link_url: string | null
+          priority: number | null
+          starts_at: string | null
+          title: string | null
+          tone: Database["public"]["Enums"]["announcement_tone"] | null
+        }
+        Insert: {
+          body?: string | null
+          ends_at?: string | null
+          id?: string | null
+          link_label?: string | null
+          link_url?: string | null
+          priority?: number | null
+          starts_at?: string | null
+          title?: string | null
+          tone?: Database["public"]["Enums"]["announcement_tone"] | null
+        }
+        Update: {
+          body?: string | null
+          ends_at?: string | null
+          id?: string | null
+          link_label?: string | null
+          link_url?: string | null
+          priority?: number | null
+          starts_at?: string | null
+          title?: string | null
+          tone?: Database["public"]["Enums"]["announcement_tone"] | null
+        }
+        Relationships: []
+      }
       budget_summary: {
         Row: {
           category: string | null
@@ -1029,6 +1154,44 @@ export type Database = {
           remaining_amount: number | null
         }
         Relationships: []
+      }
+      project_effort_cost: {
+        Row: {
+          approved_hours: number | null
+          billable_hours: number | null
+          code: string | null
+          contract_value: number | null
+          contributors: number | null
+          customer: string | null
+          indicative_cost: number | null
+          name: string | null
+          pct_of_contract: number | null
+          project_id: string | null
+          rows_without_rate: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "timesheets_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "project_health"
+            referencedColumns: ["project_id"]
+          },
+          {
+            foreignKeyName: "timesheets_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "project_progress"
+            referencedColumns: ["project_id"]
+          },
+          {
+            foreignKeyName: "timesheets_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       project_health: {
         Row: {
@@ -1068,6 +1231,51 @@ export type Database = {
           total_weight: number | null
         }
         Relationships: []
+      }
+      project_talent_contribution: {
+        Row: {
+          approved_hours: number | null
+          billable_hours: number | null
+          full_name: string | null
+          grade: string | null
+          hourly_rate: number | null
+          indicative_cost: number | null
+          period_month: string | null
+          profile_id: string | null
+          project_id: string | null
+          role: Database["public"]["Enums"]["user_role"] | null
+          squad: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "timesheets_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "timesheets_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "project_health"
+            referencedColumns: ["project_id"]
+          },
+          {
+            foreignKeyName: "timesheets_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "project_progress"
+            referencedColumns: ["project_id"]
+          },
+          {
+            foreignKeyName: "timesheets_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       talent_delivery: {
         Row: {
@@ -1146,6 +1354,7 @@ export type Database = {
         | "internal"
         | "leave"
         | "training"
+      announcement_tone: "info" | "success" | "warning" | "critical"
       budget_entry_type: "commitment" | "realization"
       chat_role: "user" | "assistant"
       dev_goal_status: "planned" | "in_progress" | "achieved" | "dropped"
@@ -1321,6 +1530,7 @@ export const Constants = {
         "leave",
         "training",
       ],
+      announcement_tone: ["info", "success", "warning", "critical"],
       budget_entry_type: ["commitment", "realization"],
       chat_role: ["user", "assistant"],
       dev_goal_status: ["planned", "in_progress", "achieved", "dropped"],

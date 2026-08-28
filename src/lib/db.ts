@@ -56,6 +56,11 @@ export type ProjectIssue = Tables<"project_issues">;
 export type DevGoalStatus = Enums<"dev_goal_status">;
 export type DevelopmentGoal = Tables<"development_goals">;
 
+/* ------------------------------------------------------- announcements */
+
+export type AnnouncementTone = Enums<"announcement_tone">;
+export type Announcement = Tables<"announcements">;
+
 /* ------------------------------------------------------------------ views */
 
 /**
@@ -71,3 +76,4 @@ export type ProjectHealthRow = Views<"project_health">;
 export type ProjectProgressRow = Views<"project_progress">;
 export type TalentPerformanceRow = Views<"talent_performance">;
 export type TalentDeliveryRow = Views<"talent_delivery">;
+export type ActiveAnnouncement = Views<"announcements_active">;

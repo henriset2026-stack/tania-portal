@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession } from "@/components/session-provider";
 import { ModuleIcon } from "@/components/module-icon";
+import { AnnouncementBanner } from "@/components/announcement-banner";
 import { modulesFor, ROLE_LABEL } from "@/lib/modules";
 import { isSupabaseConfigured } from "@/lib/supabase";
 
@@ -59,6 +60,8 @@ export default function Home() {
       <Header />
 
       <main className="mx-auto w-full max-w-[1440px] px-6 pb-16 lg:px-10">
+        <AnnouncementBanner />
+
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
           <section className="pt-8">
             <p className="text-[15px] text-slate-600">

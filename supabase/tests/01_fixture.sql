@@ -92,3 +92,12 @@ insert into public.development_goals (id, profile_id, title, target_level, statu
 insert into public.cost_rates (fiscal_year, role, grade, hourly_rate) values
   (2026, 'talent', '', 200000),
   (2026, 'pm',     '', 300000);
+
+-- ---------- announcements (migration 11) ----------
+insert into public.announcements (id, title, body, tone, priority, ends_at, starts_at) values
+  ('00000000-0000-0000-0000-0000000000e4','Aktif','Tayang sekarang.','info',10,null, now()),
+  -- Expired: it must also have STARTED in the past, or the window
+  -- constraint rejects it — as it should.
+  ('00000000-0000-0000-0000-0000000000e5','Kedaluwarsa','Sudah lewat.','info',20, now() - interval '1 day', now() - interval '2 days'),
+  ('00000000-0000-0000-0000-0000000000e6','Nonaktif','Dimatikan.','info',30,null, now());
+update public.announcements set is_active=false where id='00000000-0000-0000-0000-0000000000e6';

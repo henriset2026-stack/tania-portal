@@ -166,6 +166,8 @@ const READ_MATRIX = {
   project_progress:    { allow: ["executive", "chapter_lead", "pm", "admin"], deny: [] },
   talent_performance:  { allow: ["executive", "chapter_lead", "admin"], deny: [] },
   cost_rates:          { allow: ["executive", "chapter_lead", "manager", "pm", "admin"], deny: ["talent"] },
+  announcements:       { allow: ["executive", "chapter_lead", "talent", "admin"], deny: [] },
+  announcements_active:{ allow: ["executive", "chapter_lead", "talent", "admin"], deny: [] },
   // A development plan is personal: owner, their manager, and leadership only.
   development_goals:   { allow: ["chapter_lead", "admin", "manager"], deny: ["pm", "executive", "talent_other"] },
   chat_conversations:  { allow: ["talent"], deny: ["chapter_lead", "admin", "executive"] },
@@ -447,6 +449,28 @@ function effortCostTests() {
   check("lead does see the rate", asLead !== "NULL" && asLead !== "", `got ${asLead}`);
 }
 
+function announcementTests() {
+  console.log("\n── announcements ──");
+  expectWrite("lead posts an announcement", U.chapter_lead,
+    `insert into public.announcements (title, body) values ('Baru','Isi.');`, true);
+  expectWrite("talent posts an announcement", U.talent,
+    `insert into public.announcements (title, body) values ('Curang','Isi.');`, false);
+  expectWrite("a link URL with no label", U.chapter_lead,
+    `insert into public.announcements (title, body, link_url) values ('X','Y','/a/');`, false);
+  expectWrite("an end date before the start", U.chapter_lead,
+    `insert into public.announcements (title, body, starts_at, ends_at)
+     values ('X','Y', now(), now() - interval '1 day');`, false);
+
+  // The window is applied in the view, so expired and disabled notices are
+  // never served — not merely hidden by the client.
+  const active = psql(
+    `select string_agg(title, ',' order by priority) from public.announcements_active;`,
+    { tuples: true }).trim().split("\n").filter(Boolean).pop() ?? "";
+  check("view serves only live notices",
+    active.includes("Aktif") && !active.includes("Kedaluwarsa") && !active.includes("Nonaktif"),
+    `got ${active}`);
+}
+
 function auditTests() {
   console.log("\n── audit trail (SF-6) ──");
   const n = Number(psql(
@@ -471,6 +495,7 @@ try {
   projectControlTests();
   journeyTests();
   effortCostTests();
+  announcementTests();
   auditTests();
 } catch (e) {
   console.error("\nharness error:", String(e.stderr || e.message).slice(0, 600));

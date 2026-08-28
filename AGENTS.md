@@ -89,6 +89,13 @@ The whole architecture rests on one decision: **there is no application server, 
 
 ## Commands
 
+- The home banner reads `announcements_active`, a view that applies the
+  schedule window and active flag in SQL — an expired notice is never sent
+  to the browser. Content is managed in Admin → Pengumuman; do not hard-code
+  banner copy.
+- The banner auto-rotates, so it must keep its pause control, its
+  `prefers-reduced-motion` opt-out, and hover/focus pausing (WCAG 2.2.2).
+  Removing any of them makes moving content that a reader cannot stop.
 - Effort-to-cost (TS-05) lives in `cost_rates` plus the `project_effort_cost`
   and `project_talent_contribution` views. **Rates are per role and grade,
   never per person** — a per-person rate column would make this salary data,

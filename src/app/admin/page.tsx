@@ -25,7 +25,7 @@ const CATEGORIES: ActivityCategory[] = [
   "training",
 ];
 
-type Tab = "projects" | "activities" | "audit";
+type Tab = "projects" | "activities" | "announcements" | "audit";
 
 export default function AdminPage() {
   const { profile } = useSession();
@@ -50,6 +50,7 @@ export default function AdminPage() {
               [
                 ["projects", "Proyek"],
                 ["activities", "Aktivitas"],
+                ["announcements", "Pengumuman"],
                 ["audit", "Jejak audit"],
               ] as const
             ).map(([key, label]) => (
@@ -70,6 +71,7 @@ export default function AdminPage() {
           </div>
           {tab === "projects" ? <Projects /> : null}
           {tab === "activities" ? <Activities /> : null}
+          {tab === "announcements" ? <Announcements /> : null}
           {tab === "audit" ? <AuditLog /> : null}
         </>
       )}
@@ -463,5 +465,190 @@ function Pager({
         Berikutnya
       </Button>
     </div>
+  );
+}
+
+/* ----------------------------------------------------- announcements */
+
+interface AnnRow {
+  id: string; title: string; body: string; tone: string;
+  link_url: string | null; link_label: string | null;
+  starts_at: string; ends_at: string | null; is_active: boolean; priority: number;
+}
+
+const TONES = ["info", "success", "warning", "critical"] as const;
+
+/** Banner content. Scheduling and the active flag are what take a notice
+ *  off the home page — deleting is for mistakes, not for expiry. */
+function Announcements() {
+  const { profile } = useSession();
+  const [page, setPage] = useState(0);
+  const [form, setForm] = useState({
+    title: "", body: "", tone: "info", link_url: "", link_label: "",
+    ends_at: "", priority: "100",
+  });
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const { rows, loading, error: loadError, reload } = useQuery<AnnRow>(
+    () =>
+      getSupabase()
+        .from("announcements")
+        .select("id, title, body, tone, link_url, link_label, starts_at, ends_at, is_active, priority")
+        .order("priority")
+        .range(page * PAGE, page * PAGE + PAGE - 1)
+        .returns<AnnRow[]>(),
+    [page],
+  );
+
+  async function add(e: FormEvent) {
+    e.preventDefault();
+    if (!profile) return;
+    setBusy(true); setError(null);
+    // link_url and link_label must both be present or both absent — the
+    // database enforces it, so send null rather than an empty string.
+    const url = form.link_url.trim() || null;
+    const label = form.link_label.trim() || null;
+    if (Boolean(url) !== Boolean(label)) {
+      setBusy(false);
+      setError("Isi URL dan label tautan bersama-sama, atau kosongkan keduanya.");
+      return;
+    }
+    const { error } = await getSupabase().from("announcements").insert({
+      title: form.title.trim(),
+      body: form.body.trim(),
+      tone: form.tone,
+      link_url: url,
+      link_label: label,
+      ends_at: form.ends_at ? new Date(form.ends_at).toISOString() : null,
+      priority: Number(form.priority) || 100,
+      created_by: profile.id,
+    });
+    setBusy(false);
+    if (error) setError(error.message);
+    else {
+      setForm({ title: "", body: "", tone: "info", link_url: "", link_label: "", ends_at: "", priority: "100" });
+      reload();
+    }
+  }
+
+  async function toggle(row: AnnRow) {
+    setBusy(true); setError(null);
+    const { error } = await getSupabase()
+      .from("announcements").update({ is_active: !row.is_active }).eq("id", row.id);
+    setBusy(false);
+    if (error) setError(error.message); else reload();
+  }
+
+  return (
+    <>
+      <Card>
+        <CardHeader>
+          <CardTitle>Tulis pengumuman</CardTitle>
+          <span className="text-[11.5px] text-muted-foreground">
+            Tampil di banner beranda · prioritas kecil tampil lebih dulu
+          </span>
+        </CardHeader>
+        <form onSubmit={add} className="grid grid-cols-1 gap-3 p-4 md:grid-cols-4">
+          <div className="md:col-span-3">
+            <Field label="Judul" htmlFor="an-title" required>
+              <Input id="an-title" required value={form.title}
+                onChange={(e) => setForm({ ...form, title: e.target.value })} />
+            </Field>
+          </div>
+          <Field label="Nada" htmlFor="an-tone">
+            <select id="an-tone" value={form.tone}
+              onChange={(e) => setForm({ ...form, tone: e.target.value })}
+              className="h-[38px] w-full rounded-md border border-border bg-white px-3 text-[13.5px]">
+              {TONES.map((t) => <option key={t} value={t}>{t}</option>)}
+            </select>
+          </Field>
+          <div className="md:col-span-4">
+            <Field label="Isi" htmlFor="an-body" required>
+              <textarea id="an-body" required rows={2} value={form.body}
+                onChange={(e) => setForm({ ...form, body: e.target.value })}
+                className="w-full rounded-md border border-border px-3 py-2 text-[13.5px] focus:border-primary focus:outline-none" />
+            </Field>
+          </div>
+          <Field label="URL tautan" htmlFor="an-url" hint="opsional, mis. /timesheet/">
+            <Input id="an-url" value={form.link_url}
+              onChange={(e) => setForm({ ...form, link_url: e.target.value })} />
+          </Field>
+          <Field label="Label tautan" htmlFor="an-label" hint="wajib bila URL diisi">
+            <Input id="an-label" value={form.link_label}
+              onChange={(e) => setForm({ ...form, link_label: e.target.value })} />
+          </Field>
+          <Field label="Berakhir" htmlFor="an-end" hint="kosong = tanpa batas">
+            <Input id="an-end" type="date" value={form.ends_at}
+              onChange={(e) => setForm({ ...form, ends_at: e.target.value })} />
+          </Field>
+          <Field label="Prioritas" htmlFor="an-prio">
+            <Input id="an-prio" inputMode="numeric" value={form.priority}
+              onChange={(e) => setForm({ ...form, priority: e.target.value.replace(/[^0-9]/g, "") })} />
+          </Field>
+          <div className="flex items-center gap-3 md:col-span-4">
+            <Button type="submit" variant="primary" disabled={busy || !form.title.trim() || !form.body.trim()}>
+              {busy ? "Menyimpan…" : "Terbitkan"}
+            </Button>
+            {error ? <span role="alert" className="text-[12.5px] text-destructive">{error}</span> : null}
+          </div>
+        </form>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Pengumuman</CardTitle>
+          <Pager page={page} count={rows.length} onChange={setPage} />
+        </CardHeader>
+        <StateBoundary loading={loading} error={loadError} empty={rows.length === 0}
+          emptyMessage="Belum ada pengumuman." onRetry={reload}>
+          <Table>
+            <thead>
+              <tr>
+                <Th className="w-[70px] text-right">Prio</Th>
+                <Th className="w-[100px]">Nada</Th>
+                <Th>Judul</Th>
+                <Th className="w-[120px]">Berakhir</Th>
+                <Th className="w-[130px]">Status</Th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((a) => {
+                const expired = a.ends_at != null && new Date(a.ends_at) <= new Date();
+                return (
+                  <tr key={a.id} className={!a.is_active || expired ? "text-muted-foreground" : undefined}>
+                    <Td className="tabular text-right">{a.priority}</Td>
+                    <Td>
+                      <Badge tone={a.tone === "critical" ? "danger" : a.tone === "warning" ? "warning" : a.tone === "success" ? "success" : "neutral"}>
+                        {a.tone}
+                      </Badge>
+                    </Td>
+                    <Td>
+                      <div className="font-medium">{a.title}</div>
+                      <div className="text-[11.5px] text-muted-foreground">{a.body.slice(0, 90)}</div>
+                    </Td>
+                    <Td className="tabular text-[12px]">{a.ends_at ? date(a.ends_at) : "—"}</Td>
+                    <Td>
+                      <div className="flex items-center gap-2">
+                        {expired ? (
+                          <Badge>kedaluwarsa</Badge>
+                        ) : a.is_active ? (
+                          <Badge tone="success">tayang</Badge>
+                        ) : (
+                          <Badge>nonaktif</Badge>
+                        )}
+                        <Button size="sm" disabled={busy} onClick={() => toggle(a)}>
+                          {a.is_active ? "Matikan" : "Aktifkan"}
+                        </Button>
+                      </div>
+                    </Td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </Table>
+        </StateBoundary>
+      </Card>
+    </>
   );
 }
