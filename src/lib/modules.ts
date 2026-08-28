@@ -132,15 +132,15 @@ export const MODULES: readonly ModuleCard[] = [
   {
     // Built (migration + edge function) but awaiting an approved spend cap,
     // so it is shown the way the template shows an unbuilt workspace.
-    href: "/avatar/",
-    title: "TANIA Avatar",
-    path: "tania/avatar",
-    description: "Asisten AI yang menjawab dari data live kelima modul, sebatas hak akses Anda.",
+    href: "#copilot",
+    title: "TANIA Copilot",
+    path: "tombol kanan bawah",
+    description: "Asisten percakapan yang menjawab dari data live seluruh modul, sebatas hak akses Anda.",
     ids: "AV-01 · AV-07",
     roles: ALL,
     tone: "mint",
     icon: "sparkle",
-    soon: "Menunggu persetujuan plafon biaya.",
+    soon: "Widget dan edge function sudah aktif; menunggu ANTHROPIC_API_KEY dan plafon biaya yang disetujui.",
   },
 ];
 
