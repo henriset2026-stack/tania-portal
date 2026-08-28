@@ -131,7 +131,9 @@ PRD.md · SAD.md       # product requirements · architecture
 
 - One module/phase per session. **Plan first for any non-trivial feature**: propose an implementation plan, wait for approval, then code.
 - Run `npm run build` after completing each feature — static export breaks silently when server-only APIs sneak in.
-- Daily work on branch `dev`; merge to `main` max 2–3×/week (each `main` deploy costs 15 of 300 monthly Netlify credits). Never enable Netlify deploy previews.
+- **`dev` is the default branch and holds the application.** `main` is stale — documentation only, no `package.json`, no `src/`. Work on `dev`.
+- Hosting is **Vercel** (`chapter-dps/tania-portal`, public alias `https://tania-portal.vercel.app`), deployed manually with `vercel deploy --prod`. There is no Git integration yet, so a push does not deploy.
+- The Netlify credit discipline in `SAD.md` AD-9 (300 credits/month, 15 per deploy, previews off) applies only if the project moves back to Netlify. `netlify.toml` is kept for that case.
 - Auth is invite-only (self-signup disabled). New users are created by admins in the Supabase dashboard or an admin page.
 - When a product decision is made in a session (e.g. scoring weights, capacity rules), record it below under "Decisions".
 - Report honestly: if `npm run build` fails or a step was skipped, say so with the output. Do not claim a feature works without having run it.
@@ -158,7 +160,7 @@ Edge function `supabase/functions/tania-assistant/` + tables `chat_conversations
 - Chat history is private per user (AV-05) — there is no admin read path, and none should be added.
 - Token usage is recorded per message (AV-06) for cost monitoring.
 - Browser access is limited to the `ALLOWED_ORIGINS` secret (exact-match origins). Unset = `http://localhost:3000` only, so an unconfigured deploy fails closed. Production holds **exactly one origin — the Netlify domain**; do not add others "just in case":
-  `supabase secrets set ALLOWED_ORIGINS="https://<site>.netlify.app" && supabase functions deploy tania-assistant`
+  `supabase secrets set ALLOWED_ORIGINS="https://tania-portal.vercel.app" && supabase functions deploy tania-assistant`
   Re-run both whenever the site URL changes, or the widget breaks with a CORS error.
 - This is the only paid component. Do not enable it in production without an approved monthly spend cap.
 
@@ -171,7 +173,7 @@ Edge function `supabase/functions/tania-assistant/` + tables `chat_conversations
 - 2026-08: Avatar CORS uses an `ALLOWED_ORIGINS` allowlist secret with exact-match origins, not a wildcard. Default when unset is localhost only — an unconfigured deploy must fail closed, never open.
 - 2026-08-27: Separation of duties on timesheet approval applies to every role — nobody approves their own row. A chapter lead's timesheet is approved by an admin and vice versa. Anyone who files timesheets must be approvable by someone else: give them a `manager_id`, or ensure a lead/admin other than themselves exists.
 - 2026-08: Database backups are GPG symmetric AES-256 encrypted before upload, so backup confidentiality does not depend on repo visibility. The passphrase is the recovery key — losing it makes every backup unrecoverable.
-- 2026-08: Production `ALLOWED_ORIGINS` contains **only the Netlify domain**. No custom Telkom domain is in scope; adding one later is a secret change plus function redeploy, not a code change.
+- 2026-08: Production `ALLOWED_ORIGINS` contains **only the production frontend origin** — now `https://tania-portal.vercel.app`, not a Netlify domain. No custom Telkom domain is in scope; adding one later is a secret change plus function redeploy, not a code change.
 - 2026-08: `AGENTS.md` is the canonical agent instruction file; `CLAUDE.md` imports it via `@AGENTS.md`. Edit this file, not `CLAUDE.md`.
 
 <!-- BEGIN:nextjs-agent-rules -->
