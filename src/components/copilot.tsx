@@ -1,6 +1,15 @@
 "use client";
 
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  type FormEvent,
+  type ReactNode,
+} from "react";
 import { useSession } from "./session-provider";
 import { getSupabase, isSupabaseConfigured } from "@/lib/supabase";
 
@@ -35,11 +44,56 @@ const SUGGESTIONS = [
   "Proyek mana yang berstatus critical?",
 ];
 
-export function Copilot() {
-  const { userId, profile } = useSession();
+/**
+ * Lets any page open the Copilot — the home module card, a "tanyakan ini"
+ * link, anywhere. Without this the widget could only be opened by its own
+ * launcher button, which is why the module card used to be inert.
+ */
+interface CopilotApi {
+  /** Open the panel, optionally pre-filling a question for review. */
+  open: (question?: string) => void;
+}
+const CopilotCtx = createContext<CopilotApi>({ open: () => {} });
+
+export function useCopilot(): CopilotApi {
+  return useContext(CopilotCtx);
+}
+
+export function CopilotProvider({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
+  // One value, because the counter and the prefilled text always change
+  // together. The counter remounts the panel so the text arrives through a
+  // lazy initialiser rather than an effect — and it is state, not a ref,
+  // because the render reads it (react-hooks/refs).
+  const [pending, setPending] = useState({ key: 0, text: "" });
+
+  const api = useCallback<CopilotApi["open"]>((question) => {
+    setPending((p) => ({ key: p.key + 1, text: question ?? "" }));
+    setOpen(true);
+  }, []);
+
+  return (
+    <CopilotCtx.Provider value={{ open: api }}>
+      {children}
+      <Copilot key={pending.key} open={open} setOpen={setOpen} prefill={pending.text} />
+    </CopilotCtx.Provider>
+  );
+}
+
+function Copilot({
+  open,
+  setOpen,
+  prefill,
+}: {
+  open: boolean;
+  setOpen: (v: boolean) => void;
+  prefill: string;
+}) {
+  const { userId, profile } = useSession();
   const [msgs, setMsgs] = useState<Msg[]>([]);
-  const [input, setInput] = useState("");
+  // Remounted on each open (keyed by the provider), so a prefilled question arrives
+  // through the initialiser instead of an effect.
+  const [input, setInput] = useState(prefill);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [conversationId, setConversationId] = useState<string | null>(null);

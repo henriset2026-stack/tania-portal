@@ -5,6 +5,8 @@ import Link from "next/link";
 import { Card } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { percent, money, dateTime } from "@/lib/format";
+import { useCopilot } from "./copilot";
+import { Button } from "./ui/button";
 
 /*
  * Executive summary — one paragraph on the chapter's condition, the movement
@@ -130,6 +132,7 @@ function actions(d: SummaryInput): Array<{ tone: "danger" | "warning" | "neutral
 }
 
 export function ExecutiveSummary(d: SummaryInput) {
+  const copilot = useCopilot();
   // Captured at mount: calling Date() during render would make the same data
   // produce different output (react-hooks/purity).
   const [computedAt] = useState(() => new Date());
@@ -155,9 +158,26 @@ export function ExecutiveSummary(d: SummaryInput) {
           <h2 className="text-[15px] font-semibold tracking-tight">Ringkasan Eksekutif</h2>
           <Badge tone={style.tone}>{style.label}</Badge>
         </div>
-        <span className="text-[11.5px] text-slate-600">
-          Diperbarui {dateTime(computedAt)} · dihitung ulang setiap halaman dibuka
-        </span>
+        <div className="flex items-center gap-3">
+          <span className="text-[11.5px] text-slate-600">
+            Diperbarui {dateTime(computedAt)}
+          </span>
+          {/* Hands the summary's own findings to the assistant as a starting
+              question, rather than making the reader retype them. */}
+          <Button
+            size="sm"
+            onClick={() =>
+              copilot.open(
+                because.length
+                  ? `Kondisi chapter saat ini ${style.label.toLowerCase()} karena ${because.join("; ")}. ` +
+                    "Jelaskan penyebabnya dari data dan sarankan urutan penanganannya."
+                  : "Ringkas kondisi chapter bulan ini dari data utilisasi, compliance, pipeline, dan anggaran.",
+              )
+            }
+          >
+            Tanya Copilot
+          </Button>
+        </div>
       </div>
 
       <div className="bg-white px-5 py-4">

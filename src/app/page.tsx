@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useSession } from "@/components/session-provider";
 import { ModuleIcon } from "@/components/module-icon";
 import { AnnouncementBanner } from "@/components/announcement-banner";
+import { useCopilot } from "@/components/copilot";
 import { modulesFor, ROLE_LABEL } from "@/lib/modules";
 import { isSupabaseConfigured } from "@/lib/supabase";
 
@@ -23,6 +24,7 @@ import { isSupabaseConfigured } from "@/lib/supabase";
  */
 export default function Home() {
   const router = useRouter();
+  const copilot = useCopilot();
   const { loading, userId, profile, signOut } = useSession();
 
   useEffect(() => {
@@ -129,7 +131,34 @@ export default function Home() {
 
           <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
             {modules.map((m) =>
-              m.soon ? (
+              m.action === "copilot" ? (
+                <button
+                  key={m.href}
+                  type="button"
+                  onClick={() => copilot.open()}
+                  className="group flex flex-col rounded-xl border border-slate-200 bg-white p-5 text-left transition-colors hover:border-slate-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0d9488]"
+                >
+                  <div className="flex items-start gap-3">
+                    <ModuleIcon icon={m.icon} tone={m.tone} />
+                    <div className="min-w-0">
+                      <h3 className="text-[15.5px] font-semibold text-slate-900">{m.title}</h3>
+                      <p className="mt-0.5 font-mono text-[12.5px] text-[#0d9488]">{m.path}</p>
+                    </div>
+                  </div>
+                  <p className="mt-3 text-[13px] leading-relaxed text-slate-600">{m.description}</p>
+                  <div className="mt-auto flex items-end justify-between pt-4">
+                    <span className="text-[11px] uppercase tracking-wide text-slate-400">{m.ids}</span>
+                    <span
+                      className="flex h-7 w-7 items-center justify-center rounded-full border border-slate-200 text-slate-400 transition-colors group-hover:border-[#0d9488] group-hover:text-[#0d9488]"
+                      aria-hidden="true"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M9 5l7 7-7 7" />
+                      </svg>
+                    </span>
+                  </div>
+                </button>
+              ) : m.soon ? (
                 <div
                   key={m.href}
                   className="flex flex-col rounded-xl border border-dashed border-slate-300 bg-white/60 p-5"

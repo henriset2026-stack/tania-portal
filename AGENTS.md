@@ -191,7 +191,10 @@ Edge function `supabase/functions/tania-assistant/` + tables `chat_conversations
   Both are **already done** on project `tmzwlurjwantvuptpvpe`: the function is deployed and the allowlist holds `https://tania-portal.vercel.app,http://localhost:3000`. Verified in production — the allowed origin is echoed, a foreign origin gets 403.
   Re-run both whenever the site URL changes, or the widget breaks with a CORS error.
 - This is the only paid component. `ANTHROPIC_API_KEY` is **not set**, so the widget renders and fails with a plain message rather than answering. Do not set the key without an approved monthly spend cap (BRD D2).
-- The widget is `src/components/copilot.tsx`, mounted in the root layout so it appears on every signed-in page and renders nothing when signed out.
+- The widget is `src/components/copilot.tsx`. `CopilotProvider` wraps the tree
+  in the root layout, so any page can open the panel with
+  `useCopilot().open(question?)` — the home module card and the dashboard
+  summary both do. It renders nothing when signed out.
 
 ---
 

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { SessionProvider } from "@/components/session-provider";
-import { Copilot } from "@/components/copilot";
+import { CopilotProvider } from "@/components/copilot";
 
 export const metadata: Metadata = {
   title: "TANIA — Portal Digital Product & Solution",
@@ -14,9 +14,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html lang="id" className="h-full">
       <body className="min-h-full">
         <SessionProvider>
-          {children}
-          {/* Present on every signed-in page; renders nothing when signed out. */}
-          <Copilot />
+          {/* Wraps the tree so any page can open the Copilot, not just its
+              own launcher button. Renders nothing when signed out. */}
+          <CopilotProvider>{children}</CopilotProvider>
         </SessionProvider>
       </body>
     </html>
